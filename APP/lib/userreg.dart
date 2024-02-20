@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Userreg extends StatefulWidget {
   const Userreg({super.key});
@@ -8,6 +10,52 @@ class Userreg extends StatefulWidget {
 }
 
 class _UserregState extends State<Userreg> {
+  final TextEditingController _namecontroller = TextEditingController();
+  final TextEditingController _phonenumbercontroller = TextEditingController();
+  final TextEditingController _addresscontroller = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordcontroller = TextEditingController();
+
+  void create() {
+    print(_namecontroller.text);
+    print(_phonenumbercontroller);
+    print(_addresscontroller);
+    print(_emailController.text);
+    print(_passwordcontroller.text);
+  }
+
+  List<Map<String, dynamic>> district = [
+    {'id': 'ernakulam', 'name': 'Ernakulam'},
+    {'id': 'idukki', 'name': 'Idukki'},
+    {'id': 'kottayam', 'name': 'Kottayam'},
+  ];
+
+  String? selectdistrict;
+  XFile? _selectedImage;
+  String? _imageUrl;
+
+  List<Map<String, dynamic>> place = [
+    {'id': 'piravom', 'name': 'piravom'},
+    {'id': 'thodupuzha', 'name': 'thodupuzha'},
+    {'id': 'pala', 'name': 'pala'},
+  ];
+  String? selectplace;
+
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = XFile(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +102,48 @@ class _UserregState extends State<Userreg> {
               child: Column(
                 children: <Widget>[
                   const SizedBox(
-                    height: 60,
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: const Color(0xff4c505b),
+                          backgroundImage: _selectedImage != null
+                              ? FileImage(File(_selectedImage!.path))
+                              : _imageUrl != null
+                                  ? NetworkImage(_imageUrl!)
+                                  : const AssetImage('assets/logo.png')
+                                      as ImageProvider,
+                          child: _selectedImage == null && _imageUrl == null
+                              ? const Icon(
+                                  Icons.add,
+                                  size: 40,
+                                  color: Color.fromARGB(255, 41, 39, 39),
+                                )
+                              : null,
+                        ),
+                        if (_selectedImage != null || _imageUrl != null)
+                          const Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 18,
+                              child: Icon(
+                                Icons.edit,
+                                size: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -68,36 +157,93 @@ class _UserregState extends State<Userreg> {
                         ]),
                     child: Column(
                       children: <Widget>[
-                         Container(
+                        Container(
                           padding: const EdgeInsets.all(5),
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: const TextField(
+                          child: TextFormField(
+                            controller: _namecontroller,
                             decoration: InputDecoration(
                                 hintText: "Name",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                           ),
                         ),
-                         Container(
+                        Container(
                           padding: const EdgeInsets.all(5),
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: const TextField(
+                          child: TextFormField(
+                            controller: _phonenumbercontroller,
                             decoration: InputDecoration(
                                 hintText: "Phone number",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                           ),
                         ),
-                         Container(
+                        Container(
                           padding: const EdgeInsets.all(5),
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: const TextField(
+                          child: DropdownButtonFormField<String>(
+                            value: selectdistrict,
+                            decoration: InputDecoration(
+                                hintText: "District",
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: InputBorder.none),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectdistrict = newValue;
+                              });
+                            },
+                            isExpanded: true,
+                            items: district.map<DropdownMenuItem<String>>(
+                              (Map<String, dynamic> dist) {
+                                return DropdownMenuItem<String>(
+                                  value: dist['id'],
+                                  child: Text(dist['name']),
+                                );
+                              },
+                            ).toList(),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey))),
+                          child: DropdownButtonFormField<String>(
+                            value: selectplace,
+                            decoration: InputDecoration(
+                                hintText: "Place",
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: InputBorder.none),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectplace = newValue;
+                              });
+                            },
+                            isExpanded: true,
+                            items: place.map<DropdownMenuItem<String>>(
+                              (Map<String, dynamic> dist) {
+                                return DropdownMenuItem<String>(
+                                  value: dist['id'],
+                                  child: Text(dist['name']),
+                                );
+                              },
+                            ).toList(),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey))),
+                          child: TextFormField(
+                            controller: _addresscontroller,
                             decoration: InputDecoration(
                                 hintText: "Address",
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -109,7 +255,8 @@ class _UserregState extends State<Userreg> {
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: const TextField(
+                          child: TextFormField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                                 hintText: "Email",
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -121,24 +268,33 @@ class _UserregState extends State<Userreg> {
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: const TextField(
+                          child: TextFormField(
+                            controller: _passwordcontroller,
                             decoration: InputDecoration(
                                 hintText: "Password",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: const TextField(
-                            decoration: InputDecoration(
-                                hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            create();
+                          },
+                          style: const ButtonStyle(
+                            fixedSize: MaterialStatePropertyAll(Size(200, 50)),
+                            backgroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 234, 149, 45)),
                           ),
+                          child: const Text(
+                            "Create",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
                         ),
                       ],
                     ),
