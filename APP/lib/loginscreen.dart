@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stellarpowers/dashboard.dart';
 import 'package:stellarpowers/userreg.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void login(){
     print(_emailController.text);
     print(_passwordcontroller.text);
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
   }
 
   @override
