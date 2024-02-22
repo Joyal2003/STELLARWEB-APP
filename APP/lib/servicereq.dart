@@ -23,6 +23,8 @@ class _ServicereqState extends State<Servicereq> {
   ];
 
   String? selecttype;
+  XFile? _selectedImage;
+  String? _imageUrl;
 
   List<Map<String, dynamic>> kw = [
     {'id': '1kw', 'name': '1 KW'},
@@ -35,6 +37,20 @@ class _ServicereqState extends State<Servicereq> {
 
     String? selectkw;
 
+ Future<void> _pickImage() async {
+    try {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = XFile(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -83,44 +99,44 @@ class _ServicereqState extends State<Servicereq> {
                   const SizedBox(
                     height: 20,
                   ),
-                  // GestureDetector(
-                  //   onTap: _pickImage,
-                  //   child: Stack(
-                  //     children: [
-                  //       CircleAvatar(
-                  //         radius: 50,
-                  //         backgroundColor: const Color(0xff4c505b),
-                  //         backgroundImage: _selectedImage != null
-                  //             ? FileImage(File(_selectedImage!.path))
-                  //             : _imageUrl != null
-                  //                 ? NetworkImage(_imageUrl!)
-                  //                 : const AssetImage('assets/logo.png')
-                  //                     as ImageProvider,
-                  //         child: _selectedImage == null && _imageUrl == null
-                  //             ? const Icon(
-                  //                 Icons.add,
-                  //                 size: 40,
-                  //                 color: Color.fromARGB(255, 41, 39, 39),
-                  //               )
-                  //             : null,
-                  //       ),
-                  //       if (_selectedImage != null || _imageUrl != null)
-                  //         const Positioned(
-                  //           bottom: 0,
-                  //           right: 0,
-                  //           child: CircleAvatar(
-                  //             backgroundColor: Colors.white,
-                  //             radius: 18,
-                  //             child: Icon(
-                  //               Icons.edit,
-                  //               size: 18,
-                  //               color: Colors.black,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //     ],
-                  //   ),
-                  // ),
+                   GestureDetector(
+                    onTap: _pickImage,
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: const Color(0xff4c505b),
+                          backgroundImage: _selectedImage != null
+                              ? FileImage(XFile(_selectedImage!.path))
+                              : _imageUrl != null
+                                  ? NetworkImage(_imageUrl!)
+                                  : const AssetImage('assets/logo.png')
+                                      as ImageProvider,
+                          child: _selectedImage == null && _imageUrl == null
+                              ? const Icon(
+                                  Icons.add,
+                                  size: 40,
+                                  color: Color.fromARGB(255, 41, 39, 39),
+                                )
+                              : null,
+                        ),
+                        if (_selectedImage != null || _imageUrl != null)
+                          const Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 18,
+                              child: Icon(
+                                Icons.edit,
+                                size: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -150,19 +166,6 @@ class _ServicereqState extends State<Servicereq> {
                                 border: InputBorder.none),
                           ),
                         ),
-                        // Container(
-                        //   padding: const EdgeInsets.all(5),
-                        //   decoration: const BoxDecoration(
-                        //       border: Border(
-                        //           bottom: BorderSide(color: Colors.grey))),
-                        //   child: TextFormField(
-                        //     controller: _phonenumbercontroller,
-                        //     decoration: InputDecoration(
-                        //         hintText: "Phone number",
-                        //         hintStyle: TextStyle(color: Colors.grey),
-                        //         border: InputBorder.none),
-                        //   ),
-                        // ),
                         Container(
                           padding: const EdgeInsets.all(5),
                           decoration: const BoxDecoration(
@@ -217,73 +220,6 @@ class _ServicereqState extends State<Servicereq> {
                             ).toList(),
                           ),
                         ),
-                        
-                        // Container(
-                        //   padding: const EdgeInsets.all(5),
-                        //   decoration: const BoxDecoration(
-                        //       border: Border(
-                        //           bottom: BorderSide(color: Colors.grey))),
-                        //   child: DropdownButtonFormField<String>(
-                        //     value: selectplace,
-                        //     decoration: InputDecoration(
-                        //         hintText: "Place",
-                        //         hintStyle: TextStyle(color: Colors.grey),
-                        //         border: InputBorder.none),
-                        //     onChanged: (String? newValue) {
-                        //       setState(() {
-                        //         selectplace = newValue;
-                        //       });
-                        //     },
-                        //     isExpanded: true,
-                        //     items: place.map<DropdownMenuItem<String>>(
-                        //       (Map<String, dynamic> dist) {
-                        //         return DropdownMenuItem<String>(
-                        //           value: dist['id'],
-                        //           child: Text(dist['name']),
-                        //         );
-                        //       },
-                        //     ).toList(),
-                        //   ),
-                        // ),
-                        // Container(
-                        //   padding: const EdgeInsets.all(5),
-                        //   decoration: const BoxDecoration(
-                        //       border: Border(
-                        //           bottom: BorderSide(color: Colors.grey))),
-                        //   child: TextFormField(
-                        //     controller: _addresscontroller,
-                        //     decoration: InputDecoration(
-                        //         hintText: "Address",
-                        //         hintStyle: TextStyle(color: Colors.grey),
-                        //         border: InputBorder.none),
-                        //   ),
-                        // ),
-                        // Container(
-                        //   padding: const EdgeInsets.all(5),
-                        //   decoration: const BoxDecoration(
-                        //       border: Border(
-                        //           bottom: BorderSide(color: Colors.grey))),
-                        //   child: TextFormField(
-                        //     controller: _emailController,
-                        //     decoration: InputDecoration(
-                        //         hintText: "Email",
-                        //         hintStyle: TextStyle(color: Colors.grey),
-                        //         border: InputBorder.none),
-                        //   ),
-                        // ),
-                        // Container(
-                        //   padding: const EdgeInsets.all(5),
-                        //   decoration: const BoxDecoration(
-                        //       border: Border(
-                        //           bottom: BorderSide(color: Colors.grey))),
-                        //   child: TextFormField(
-                        //     controller: _passwordcontroller,
-                        //     decoration: InputDecoration(
-                        //         hintText: "Password",
-                        //         hintStyle: TextStyle(color: Colors.grey),
-                        //         border: InputBorder.none),
-                        //   ),
-                        // ),
                         const SizedBox(
                           height: 40,
                         ),
