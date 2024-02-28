@@ -9,7 +9,7 @@ urlpatterns = [
   # path('review/',views.review,name="review"),
   path('changepassword/',views.changepassword,name="changepassword"),
   path('complaint/',views.complaint,name="complaint"),
-
+  path('myservice/',views.myservice,name="myservice")
 
 
 ]

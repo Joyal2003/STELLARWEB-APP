@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect
 import firebase_admin 
 from firebase_admin import firestore,credentials,storage,auth
 import pyrebase
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 
 db=firestore.client()
 
@@ -161,13 +164,31 @@ def accepted(request,id):
     if request.method=="POST":
         data={"date":request.POST.get("date")}
         db.collection("tbl_servicerequest").add(data)
-        return render(request,"Admin/Accept.html")
-    else:
-        return render(request,"Admin/Accept.html")
+    
+        
+    user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+    email = user["user_email"]
+    send_mail(
+    'Service Booking', 
+    "\rHello \r\n Your service booking has accepted our technishian will  contact you",#body
+    settings.EMAIL_HOST_USER,
+    [email],
+    )
+    return render(request,"Admin/servicebooking.html",{"msg":email})    
+    
 
 
 def rejected(request,id):
     req=db.collection("tbl_servicerequest").document(id).update({"service_status":2})
+    user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+    email = user["user_email"]
+    send_mail(
+    'Service Booking', 
+    "\rHello \r\n Your service booking has rejected our technishian ",#body
+    settings.EMAIL_HOST_USER,
+    [email],
+    )
+    return render(request,"Admin/servicebooking.html",{"msg":email}) 
     return redirect("webadmin:servicebooking") 
 
 
@@ -184,5 +205,3 @@ def viewproduct(request):
 
 
 
-
-        

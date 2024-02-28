@@ -104,3 +104,6 @@ def products(request):
 def review(request):
     return render(request,"User/Review.html")
 
+def myservice(request):
+  return render(request,"User/MyService.html")    
+
