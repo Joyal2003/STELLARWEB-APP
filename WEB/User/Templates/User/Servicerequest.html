@@ -14,7 +14,24 @@
                 <td>Content</td>
                 <td><textarea name="content" id="" cols="30" rows="10"></textarea></td>
             </tr>
-            
+            <tr>
+                <td>Product type</td>
+                <td><select name="sel_producttype" id="sel_producttype">
+                    <option value="">...Select...</option>
+                    {% for i in producttype %}
+                    <option value="{{i.id}}">{{i.pty.producttype_name}}</option>
+                {% endfor %}
+            </select></td>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td><select name="sel_type" id="sel_ type">
+                    <option value="">...Select...</option>
+                    {% for i in type %}
+                    <option value="{{i.id}}">{{i.pdt.type_name}}</option>
+                {% endfor %}
+            </select></td>
+            </tr>
             <tr>
                 <td colspan="2" align="center"><input type="submit" value="Submit"></td>
             </tr>
@@ -27,21 +44,7 @@
             <td>Reply</td>
             <td>Action</td>
         </tr>
-        {% for i in com %}
-        <tr>
-           <td>{{forloop.counter}}</td>
-           <td>{{i.com.complaint_content}}</td>
-           <td>
-            {% if i.com.complaint_status == "1" %}
-            {{i.com.complaint_reply}}
-            {% else %}
-            Not Replyed
-            {% endif %}
-           </td>
-           <td><a href="{% url 'webteams:delcomplaint' i.id %}">Delete</a></td>
-            
-        </tr>
-        {% endfor %}
+        
     </table>
 </body>
 </html>

@@ -113,29 +113,22 @@ def delproducttype(request,id):
     db.collection("tbl_producttype").document(id).delete()
     return redirect("webadmin:producttype")
 
-def product(request):
-    pdt=db.collection("tbl_producttype").stream()
+
+
+def types(request):
+    pdt=db.collection("tbl_type").stream()
     pdt_data=[]
     for i in pdt:
         data=i.to_dict()
         pdt_data.append({"pdt":data,"id":i.id})
-    result=[]
-    product_data=db.collection("tbl_product").stream()
-    for product in product_data:
-        product_pdtd=product.to_dict()
-        producttype=db.collection("tbl_producttype").document(product_pdtd["producttype_id"]).get().to_dict()
-        result.append({'producttypedata':producttype,'product_data':product_pdtd,'productid':product.id})
     if request.method=="POST":
-        image = request.FILES.get("photo")
-        if image:
-            path = "ProductPhoto/" + image.name
-            st.child(path).put(image)
-            u_url = st.child(path).get_url(None)
-        data={"product_name":request.POST.get("product"),"producttype_id":request.POST.get("producttype"),"product_photo":u_url}
-        db.collection("tbl_product").add(data)
-        return redirect("webadmin:product")
+        data={"type_name":request.POST.get("type_name")}
+        db.collection("tbl_type").add(data)
+        return redirect("webadmin:types")
     else:
-        return render(request,"Admin/Product.html",{"producttype":pdt_data,"product":result})
+        return render(request,"Admin/Type.html",{"type":pdt_data})
+
+
 
 def admin(request):
     if request.method =="POST":
@@ -152,10 +145,34 @@ def admin(request):
 
 
 def servicebooking(request):
-    return render(request,"Admin/Servicebooking.html")
+    ser=db.collection("tbl_servicerequest").where("service_status","==",0).stream()
+    ser_data=[]
+    for i in ser:
+        data=i.to_dict()
+        user = db.collection("tbl_userreg").document(data["user_id"]).get().to_dict()
+        producttype = db.collection("tbl_producttype").document(data["producttype_id"]).get().to_dict()
+        types = db.collection("tbl_type").document(data["type_id"]).get().to_dict()
+        ser_data.append({"view":data,"id":i.id,"user":user,"producttype":producttype,"types":types})
+        
+    return render(request,"Admin/servicebooking.html",{"view":ser_data})
 
-def complaints(request):
-    return render(request,"Admin/Complaints.html")
+def accepted(request,id):
+    req=db.collection("tbl_servicerequest").document(id).update({"service_status":1})
+    if request.method=="POST":
+        data={"date":request.POST.get("date")}
+        db.collection("tbl_servicerequest").add(data)
+        return render(request,"Admin/Accept.html")
+    else:
+        return render(request,"Admin/Accept.html")
+
+
+def rejected(request,id):
+    req=db.collection("tbl_servicerequest").document(id).update({"service_status":2})
+    return redirect("webadmin:servicebooking") 
+
+
+def servicereplay(request):
+    return render(request,"Admin/Servicereplay.html")
 
 def complaintreplay(request):
     return render(request,"Admin/Complaintreplay.html")

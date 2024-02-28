@@ -9,19 +9,27 @@
     <table>
         <tr>
             <th>Sl no</th>
-            <th>Product image</th>
-            <th>Product Name</th>
-            <th>User Name</th>
+            <th>user name</th>
+            <th>complaint</th>
+            <th>Product name</th>
+            <th>product type</th>
             <th>Address</th>
-            <th>Location</th>
-            <th>Status</th>
+            <th>phone no</th>
             <th>Action</th>
         </tr>
-            <tr>
-                <td><label for="product_name"></label></td>
-                <td><label for="user_name"></label></td>
-                <td></td>
-            </tr>
+        {% for i in view %}
+        <tr>
+           <td>{{forloop.counter}}</td>
+           <td>{{i.user.user_name}}</td>
+           <td>{{i.view.service_content}}</td>
+           <td>{{i.producttype.producttype_name}}</td>
+           <td>{{i.types.type_name}}</td>
+           <td>{{i.user.user_address}}</td>
+           <td>{{i.user.user_contact}}</td>
+           <td><a href="{% url 'webadmin:accepted' i.id %}">Accepted</a></td>
+           <td><a href="{% url 'webadmin:rejected' i.id %}">Rejected</a></td>
+        </tr>
+        {% endfor %}
     </table>
 </body>
 </html>

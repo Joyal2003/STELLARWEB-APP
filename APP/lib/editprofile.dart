@@ -1,61 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
-
-class Servicereq extends StatefulWidget {
-  const Servicereq({super.key});
+class Editprofile extends StatefulWidget {
+  const Editprofile({super.key});
 
   @override
-  State<Servicereq> createState() => _ServicereqState();
+  State<Editprofile> createState() => _EditprofileState();
 }
- 
 
-class _ServicereqState extends State<Servicereq> {
+class _EditprofileState extends State<Editprofile> {
+  final TextEditingController _namecontroller = TextEditingController();
+  final TextEditingController _phonenumbercontroller = TextEditingController();
+  final TextEditingController _addresscontroller = TextEditingController();
   
-   final TextEditingController _namecontroller = TextEditingController();
-  
-    void submit() {
+void create() {
     print(_namecontroller.text);
-    }
-    
-    List<Map<String, dynamic>> type = [
-    {'id': 'ongrid', 'name': 'ON GRID'},
-    {'id': 'offgrid', 'name': 'OFF GRID'},
-    {'id': 'homeinverter', 'name': 'HOME INVERTER'},
-  ];
-
-  String? selecttype;
-  XFile? _selectedImage;
-  String? _imageUrl;
-
-  List<Map<String, dynamic>> kw = [
-    {'id': '1kw', 'name': '1 KW'},
-    {'id': '2kw', 'name': '2 KW'},
-    {'id': '3kw', 'name': '3 KW'},
-    {'id': '4kw', 'name': '4 KW'},
-    {'id': '5kw', 'name': '5 KW'},
-    {'id': '6kw', 'name': '6 KW'},
-  ];
-
-    String? selectkw;
-
- Future<void> _pickImage() async {
-    try {
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-
-      if (pickedFile != null) {
-        setState(() {
-          _selectedImage = XFile(pickedFile.path);
-        });
-      }
-    } catch (e) {
-      print('Error picking image: $e');
-    }
-  }
+    print(_phonenumbercontroller);
+    print(_addresscontroller);
+}
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+     return Scaffold(
         body: Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -76,7 +40,7 @@ class _ServicereqState extends State<Servicereq> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Create Account',
+                  'Edit Profile',
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 ),
                 SizedBox(
@@ -101,7 +65,7 @@ class _ServicereqState extends State<Servicereq> {
                   const SizedBox(
                     height: 20,
                   ),
-                  //  GestureDetector(
+                  // GestureDetector(
                   //   onTap: _pickImage,
                   //   child: Stack(
                   //     children: [
@@ -109,7 +73,7 @@ class _ServicereqState extends State<Servicereq> {
                   //         radius: 50,
                   //         backgroundColor: const Color(0xff4c505b),
                   //         backgroundImage: _selectedImage != null
-                  //             ? FileImage(XFile(_selectedImage!.path))
+                  //             ? FileImage(File(_selectedImage!.path))
                   //             : _imageUrl != null
                   //                 ? NetworkImage(_imageUrl!)
                   //                 : const AssetImage('assets/logo.png')
@@ -160,10 +124,9 @@ class _ServicereqState extends State<Servicereq> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
-                            keyboardType: TextInputType.multiline,
                             controller: _namecontroller,
                             decoration: InputDecoration(
-                                hintText: "Complaint",
+                                hintText: "Name",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                           ),
@@ -173,26 +136,12 @@ class _ServicereqState extends State<Servicereq> {
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: DropdownButtonFormField<String>(
-                            value: selecttype,
+                          child: TextFormField(
+                            controller: _phonenumbercontroller,
                             decoration: InputDecoration(
-                                hintText: "Type",
+                                hintText: "Phone number",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selecttype = newValue;
-                              });
-                            },
-                            isExpanded: true,
-                            items: type.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> dist) {
-                                return DropdownMenuItem<String>(
-                                  value: dist['id'],
-                                  child: Text(dist['name']),
-                                );
-                              },
-                            ).toList(),
                           ),
                         ),
                         Container(
@@ -200,34 +149,21 @@ class _ServicereqState extends State<Servicereq> {
                           decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
-                          child: DropdownButtonFormField<String>(
-                            value: selectkw,
+                          child: TextFormField(
+                            controller: _addresscontroller,
                             decoration: InputDecoration(
-                                hintText: "kw",
+                                hintText: "Address",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectkw = newValue;
-                              });
-                            },
-                            isExpanded: true,
-                            items: kw.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> dist) {
-                                return DropdownMenuItem<String>(
-                                  value: dist['id'],
-                                  child: Text(dist['name']),
-                                );
-                              },
-                            ).toList(),
                           ),
                         ),
+                        
                         const SizedBox(
                           height: 40,
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            submit();
+                            create();
                           },
                           style: const ButtonStyle(
                             fixedSize: MaterialStatePropertyAll(Size(200, 50)),
@@ -235,7 +171,7 @@ class _ServicereqState extends State<Servicereq> {
                                 Color.fromARGB(255, 234, 149, 45)),
                           ),
                           child: const Text(
-                            "Submit",
+                            "Save",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),

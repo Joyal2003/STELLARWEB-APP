@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stellarpowers/servicereq.dart';
+import 'package:stellarpowers/myprofile.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -98,7 +99,15 @@ class _DashboardState extends State<Dashboard> {
                     const SizedBox(
                     height: 60,
                   ),
-                    Container(
+                    GestureDetector(
+                      onTap: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Myprofile(),
+                          ));
+                      },
+                    child: Container(
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 250, 173, 39),
                         borderRadius: BorderRadius.circular(20)
@@ -107,6 +116,7 @@ class _DashboardState extends State<Dashboard> {
                       width : 250,
                       child :Center(child: Text('My Profile',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
                     ),
+                    )
                   ]
                 ),
                 ],

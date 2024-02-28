@@ -9,24 +9,29 @@ urlpatterns = [
     path('Place/',views.Place,name="Place"),
     path('delplace/<str:id>',views.delplace,name="delplace"),
     path('editplace/<str:id>',views.editplace,name="editplace"),
+
+    # path('servicerequest/',views.servicerequest,name="servicerequest"),
     
   
     path('producttype/',views.producttype,name="producttype"), 
     path('delproducttype/<str:id>',views.delproducttype,name="delproducttype"),
     path('editproducttype/<str:id>',views.editproducttype,name="editproducttype"),
     
-    path('product/',views.product,name="product"),
+    path('type/',views.types,name="types"),
        
        
     path('admin/',views.admin,name="admin"),
     
       
-         path('servicebooking/',views.servicebooking,name="sercivebooking"),
-          path('complaints/',views.complaints,name="complaints"),
+    path('servicebooking/',views.servicebooking,name="sercivebooking"),
+    path('servicereplay/',views.servicereplay,name="servicereplay"),
+
+          
            path('complaintreplay/',views.complaintreplay,name="complaintreplay"),
             path('viewproduct/',views.viewproduct,name="viewproduct"),
 
-
+    path('accepted/<str:id>',views.accepted,name="accepted"),
+    path('rejected<str:id>',views.rejected,name="rejected")
 
      
 ]   

@@ -5,6 +5,7 @@ import pyrebase
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+from datetime import date
 
 db=firestore.client()
 
@@ -74,6 +75,28 @@ def complaint(request):
 def delcomplaint(request,id):
   db.collection("tbl_complaint").document(id).delete()     
   return redirect("webuser:complaint")  
+
+def servicerequest(request):
+  ser=db.collection("tbl_servicerequest").where("user_id","==",request.session["uid"]).stream()
+  ser_data=[]
+  for i in ser:
+    data=i.to_dict()
+    ser_data.append({"ser":data,"id":i.id})
+  pty = db.collection("tbl_producttype").stream()
+  pty_data = []
+  for d in pty:
+        pty_data.append({"pty":d.to_dict(),"id":d.id})
+  pdt = db.collection("tbl_type").stream()
+  pdt_data = []
+  for d in pdt:
+        pdt_data.append({"pdt":d.to_dict(),"id":d.id})
+  if request.method=="POST":
+    datedata = date.today()
+    data={"service_content":request.POST.get("content"),"user_id":request.session["uid"],"producttype_id":request.POST.get("sel_producttype"),"type_id":request.POST.get("sel_type"),"service_status":0,"service_date":str(datedata)}
+    db.collection("tbl_servicerequest").add(data)
+    return redirect("webuser:servicerequest")
+  else:
+    return render(request,"User/Servicerequest.html",{"ser":ser_data,"producttype":pty_data,"type":pdt_data})
 
 def products(request):
     return render(request,"User/Products.html")
