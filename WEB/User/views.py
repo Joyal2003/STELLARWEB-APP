@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect
 import firebase_admin 
 from firebase_admin import firestore,credentials,storage,auth
 import pyrebase
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 
 db=firestore.client()
 
@@ -47,7 +50,7 @@ def changepassword(request):
   send_mail(
     'Reset your password ', 
     "\rHello \r\nFollow this link to reset your Project password for your " + email + "\n" + password_link +".\n If you didn't ask to reset your password, you can ignore this email. \r\n Thanks. \r\n Your D MARKET user.",#body
-    settings.EMAIL_HOST_user,
+    settings.EMAIL_HOST_USER,
     [email],
   )
   return render(request,"User/Homepage.html",{"msg":email})
@@ -78,5 +81,3 @@ def products(request):
 def review(request):
     return render(request,"User/Review.html")
 
-def changepassword(request):
-    return render(request,"User/Changepassword.html")
