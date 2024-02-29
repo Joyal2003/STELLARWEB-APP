@@ -10,13 +10,13 @@ from datetime import date
 db=firestore.client()
 
 config = {
-  "apiKey": "AIzaSyC-B9e73ulMpTAHH4DXU0iY31N5UfaZ-SY",
-  "authDomain": "stellar-powers.firebaseapp.com",
-  "projectId": "stellar-powers",
-  "storageBucket": "stellar-powers.appspot.com",
-  "messagingSenderId": "584258827192",
-  "appId": "1:584258827192:web:0732d9ba85c02c7f93d54d",
-  "measurementId": "G-LD235E67QN",
+  "apiKey": "AIzaSyAIAg5LMCrWYb9Ytx73UNY8Rtq8E5ia3Uk",
+  "authDomain": "stellarpower-e2086.firebaseapp.com",
+  "projectId": "stellarpower-e2086",
+  "storageBucket": "stellarpower-e2086.appspot.com",
+  "messagingSenderId": "714960895991",
+  "appId": "1:714960895991:web:989fefb9d9f1f3621df8f2",
+  "measurementId": "G-3JZERD4240",
   "databaseURL":""
 }
 
@@ -105,5 +105,10 @@ def review(request):
     return render(request,"User/Review.html")
 
 def myservice(request):
-  return render(request,"User/MyService.html")    
+  ser=db.collection("tbl_servicerequest").stream()
+  ser_data=[]
+  for i in ser:
+    data=i.to_dict()
+    ser_data.append({"view":data,"id":i.id})
+  return render(request,"User/MyService.html",{"view":ser_data})    
 

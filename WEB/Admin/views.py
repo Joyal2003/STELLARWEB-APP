@@ -9,13 +9,13 @@ from django.contrib import messages
 db=firestore.client()
 
 config = {
-  "apiKey": "AIzaSyC-B9e73ulMpTAHH4DXU0iY31N5UfaZ-SY",
-  "authDomain": "stellar-powers.firebaseapp.com",
-  "projectId": "stellar-powers",
-  "storageBucket": "stellar-powers.appspot.com",
-  "messagingSenderId": "584258827192",
-  "appId": "1:584258827192:web:0732d9ba85c02c7f93d54d",
-  "measurementId": "G-LD235E67QN",
+  "apiKey": "AIzaSyAIAg5LMCrWYb9Ytx73UNY8Rtq8E5ia3Uk",
+  "authDomain": "stellarpower-e2086.firebaseapp.com",
+  "projectId": "stellarpower-e2086",
+  "storageBucket": "stellarpower-e2086.appspot.com",
+  "messagingSenderId": "714960895991",
+  "appId": "1:714960895991:web:989fefb9d9f1f3621df8f2",
+  "measurementId": "G-3JZERD4240",
   "databaseURL":""
 }
 
@@ -160,21 +160,22 @@ def servicebooking(request):
     return render(request,"Admin/servicebooking.html",{"view":ser_data})
 
 def accepted(request,id):
-    req=db.collection("tbl_servicerequest").document(id).update({"service_status":1})
+    req=db.collection("tbl_servicerequest").stream()
     if request.method=="POST":
-        data={"date":request.POST.get("date")}
-        db.collection("tbl_servicerequest").add(data)
-    
-        
-    user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
-    email = user["user_email"]
-    send_mail(
-    'Service Booking', 
-    "\rHello \r\n Your service booking has accepted our technishian will  contact you",#body
-    settings.EMAIL_HOST_USER,
-    [email],
-    )
-    return render(request,"Admin/servicebooking.html",{"msg":email})    
+        day = request.POST.get("date") 
+        data={"date":request.POST.get("date"),"service_status":1}
+        db.collection("tbl_servicerequest").document(id).update(data)
+        user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+        email = user["user_email"]
+        send_mail(
+        'Service Booking', 
+        "\rHello \r\n Your service booking has accepted our technishian will  contact you in " + day,#body
+        settings.EMAIL_HOST_USER,
+        [email],
+        )
+        return render(request,"Admin/servicebooking.html",{"msg":email})
+    else:
+        return render(request,"Admin/Accept.html")
     
 
 
@@ -189,7 +190,7 @@ def rejected(request,id):
     [email],
     )
     return render(request,"Admin/servicebooking.html",{"msg":email}) 
-    return redirect("webadmin:servicebooking") 
+ 
 
 
 def servicereplay(request):
@@ -198,8 +199,9 @@ def servicereplay(request):
 def complaintreplay(request):
     return render(request,"Admin/Complaintreplay.html")
 
-def viewproduct(request):
-    return render(request,"Admin/Viewproduct.html")
+def homepage(request):
+    return render(request,"Admin/Homepage.html")
+
 
 
 

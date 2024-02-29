@@ -128,11 +128,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-cred =credentials.Certificate('Db\stellar-powers-firebase-adminsdk-yqgll-9824692702.json')
+cred =credentials.Certificate('Db\stellarpower-e2086-firebase-adminsdk-xr5x5-cfea780604.json')
 app=firebase_admin.initialize_app(cred)
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'joyalthomas2727@gmail.com'
-EMAIL_HOST_PASSWORD = 'dztafjqmtarijawe'
+EMAIL_HOST_USER = 'stellarpowersolution2003@gmail.com'
+EMAIL_HOST_PASSWORD = 'jenzuvuysuauuuna'

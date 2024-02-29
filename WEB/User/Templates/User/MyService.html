@@ -11,18 +11,27 @@
 
         <table>
             <tr>
-                <td>#</td>
-                <td>Content</td>
+                <td>sl no</td>
+                <td>Complaint</td>
+                <td>Date</td>
                 <td>Status</td>
-                <td></td>
             </tr>
+            {% for i in view %}
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.view.service_content}}</td>
+                <td>{{i.view.date}}</td>
+                <td>
+                    {% if i.view.service_status == 0 %}
+                    <span style="color: red;">Pending</span>
+                    {% elif i.view.service_status == 1 %}
+                    <span style="color: green;">Accepted</span>
+                    {% else %}
+                    <span style="color: red;">Rejected</span>
+                    {% endif %}
+                </td>
             </tr>
+            {% endfor %}
         </table>
     </form>
 </body>

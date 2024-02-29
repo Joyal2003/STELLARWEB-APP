@@ -21,6 +21,7 @@ urlpatterns = [
        
        
     path('admin/',views.admin,name="admin"),
+    path('homepage/',views.homepage,name="homepage"),
     
       
     path('servicebooking/',views.servicebooking,name="sercivebooking"),
@@ -28,7 +29,7 @@ urlpatterns = [
 
           
            path('complaintreplay/',views.complaintreplay,name="complaintreplay"),
-            path('viewproduct/',views.viewproduct,name="viewproduct"),
+            
 
     path('accepted/<str:id>',views.accepted,name="accepted"),
     path('rejected<str:id>',views.rejected,name="rejected")
