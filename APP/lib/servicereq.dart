@@ -76,7 +76,7 @@ class _ServicereqState extends State<Servicereq> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Create Account',
+                  'Service Request',
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 ),
                 SizedBox(
