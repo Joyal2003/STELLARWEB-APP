@@ -7,22 +7,19 @@
 </head>
 <body>
     <form id="form1" name="form1" method="post" action="">
+      {% csrf_token %}
         <table width="200" border="1" align="center">
           <tr>
             <td width="89">Name</td>
-            <td width="95"><input type="text" name="txtname" value=""></td>
+            <td width="95"><input type="text" name="name" value=""></td>
           </tr>
           <tr>
             <td>Contact</td>
-            <td><input type="text" name="txtcontact" value=""></td>
+            <td><input type="text" name="contact" value=""></td>
           </tr>
           <tr>
             <td>Address</td>
-            <td><input type="text" name="txtaddress" value=""></td>
-          </tr>
-          <tr>
-            <td>Email</td>
-            <td><input type="text" name="txtemail" value=""></td>
+            <td><input type="text" name="address" value=""></td>
           </tr>
           <tr>
             <td colspan="2"  align="center"><input type="submit" name="update" id="update" value="Update" />

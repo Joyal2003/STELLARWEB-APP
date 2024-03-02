@@ -175,7 +175,7 @@ def accepted(request,id):
         )
         return render(request,"Admin/servicebooking.html",{"msg":email})
     else:
-        return render(request,"Admin/Accept.html")
+        return render(request,"Admin/Servicereplay.html")
     
 
 
