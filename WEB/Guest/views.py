@@ -21,6 +21,9 @@ authe = firebase.auth()
 st = firebase.storage()
 
 # Create your views here.
+def index(request):
+    return render(request,"Guest/index.html")
+
 
 def login(request):
     userid=""

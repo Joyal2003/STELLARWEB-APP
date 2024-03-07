@@ -1,6 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+
 
 class Userreg extends StatefulWidget {
   const Userreg({super.key});
@@ -10,11 +15,17 @@ class Userreg extends StatefulWidget {
 }
 
 class _UserregState extends State<Userreg> {
+    final _formSignupKey = GlobalKey<FormState>();
+  bool agreePersonalData = true;
+  XFile? _selectedImage;
+  String? _imageUrl;
+  String? filePath;
   final TextEditingController _namecontroller = TextEditingController();
   final TextEditingController _phonenumbercontroller = TextEditingController();
   final TextEditingController _addresscontroller = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
+   FirebaseFirestore db = FirebaseFirestore.instance;
 
   void create() {
     print(_namecontroller.text);

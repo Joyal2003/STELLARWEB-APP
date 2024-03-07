@@ -5,4 +5,5 @@ urlpatterns = [
   path('login/',views.login,name="login"),
   path('userreg/',views.userreg,name="userreg"),
   path('ajaxplace/',views.ajaxplace,name="ajaxplace"),
+  path('index/',views.index,name="index"),
 ]

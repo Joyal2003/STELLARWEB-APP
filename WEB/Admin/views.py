@@ -148,7 +148,7 @@ def admin(request):
 
 
 def servicebooking(request):
-    ser=db.collection("tbl_servicerequest").where("service_status","==",0).stream()
+    ser=db.collection("tbl_servicerequest").stream()
     ser_data=[]
     for i in ser:
         data=i.to_dict()

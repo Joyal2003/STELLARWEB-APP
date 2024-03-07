@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:stellarpowers/dashboard.dart';
 import 'package:stellarpowers/userreg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,15 +13,64 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
+     final _formSignInKey = GlobalKey<FormState>();
+  bool rememberPassword = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
+    late ProgressDialog _progressDialog;
+    
+     @override
+  void initState() {
+    super.initState();
+    _progressDialog = ProgressDialog(context);
+  }
 
-  void login(){
-    print(_emailController.text);
-    print(_passwordcontroller.text);
+  Future<void> login() async {
+    try {
+              _progressDialog.show();
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+      final FirebaseAuth auth = FirebaseAuth.instance;
+        final UserCredential userCredential =
+            await auth.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordcontroller.text.trim(),
+        );
+
+      print(userCredential.user?.uid);
+
+        String? userId = userCredential.user?.uid;
+        if (userId != null) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const Dashboard(),
+              ));
+        } else {
+          _progressDialog.hide();
+
+          print('Failed to fetch student status.');
+        }
+      }
+
+       catch (e) {
+        
+        _progressDialog.hide();
+
+     String errorMessage = 'Login failed';
+
+        if (e is FirebaseAuthException) {
+          errorMessage = e.code;
+        }
+
+        Fluttertoast.showToast(
+          msg: errorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+
   }
 
   @override

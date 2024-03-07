@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714960895991",
+    "project_id": "stellarpower-e2086",
+    "storage_bucket": "stellarpower-e2086.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714960895991:android:2e2dd105d2647e321df8f2",
+        "android_client_info": {
+          "package_name": "com.example.stellarpowers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1JESe4OEIddCt8q0mQh05lBqHJHMsgQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

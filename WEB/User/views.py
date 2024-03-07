@@ -101,8 +101,8 @@ def servicerequest(request):
 def products(request):
     return render(request,"User/Products.html")
     
-def review(request):
-    return render(request,"User/Review.html")
+def feedback(request):
+    return render(request,"User/Feedback.html")
 
 def myservice(request):
   ser=db.collection("tbl_servicerequest").stream()

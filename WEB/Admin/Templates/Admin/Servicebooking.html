@@ -26,10 +26,27 @@
            <td>{{i.types.type_name}}</td>
            <td>{{i.user.user_address}}</td>
            <td>{{i.user.user_contact}}</td>
-           <td><a href="{% url 'webadmin:accepted' i.id %}">Accepted</a></td>
-           <td><a href="{% url 'webadmin:rejected' i.id %}">Rejected</a></td>
+           <td>{% if i.view.service_status == 0 %}
+            <a href="{% url 'webadmin:accepted' i.id %}">Accepted</a>
+            <a href="{% url 'webadmin:rejected' i.id %}">Rejected</a>
+                
+                {% elif i.view.service_status == 1 %}
+                <span style="color: green;">Accepted | <a href="">Completed</a></span>
+                {% elif i.view.service_status == 3 %}
+                <span style="color: green;">Completed</span>
+                {% else %}
+                <span style="color: red;">Rejected</span>
+                {% endif %}
+            </td>
+
         </tr>
         {% endfor %}
     </table>
+    {% if msg %}
+    <script>
+        alert("Mail i sented to {{msg}}")
+        window.location = "{% url 'webadmin:sercivebooking' %}"
+    </script>
+    {% endif %}
 </body>
 </html>
