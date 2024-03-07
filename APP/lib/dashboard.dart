@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stellarpowers/myservice.dart';
 import 'package:stellarpowers/servicereq.dart';
 import 'package:stellarpowers/myprofile.dart';
 
@@ -87,14 +88,23 @@ class _DashboardState extends State<Dashboard> {
                     const SizedBox(
                     height: 60,
                   ),
-                    Container(
+                    GestureDetector(
+                      onTap: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Myservice(),
+                          ));
+                      },
+                    child: Container(
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 250, 173, 39),
                         borderRadius: BorderRadius.circular(20)
                     ),
                       height: 150,
                       width : 250,
-                      child :Center(child: Text('My Service',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                      child :Center(child: Text('My service',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
+                    ),
                     ),
                     const SizedBox(
                     height: 60,
