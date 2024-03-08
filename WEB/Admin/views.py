@@ -190,6 +190,18 @@ def rejected(request,id):
     [email],
     )
     return render(request,"Admin/servicebooking.html",{"msg":email}) 
+
+def completed(request,id):
+    req=db.collection("tbl_servicerequest").document(id).update({"service_status":3})
+    user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+    email = user["user_email"]
+    send_mail(
+    'Service Booking', 
+    "\rHello \r\n Your service is completed ",#body
+    settings.EMAIL_HOST_USER,
+    [email],
+    )
+    return render(request,"Admin/servicebooking.html",{"msg":email}) 
  
 
 

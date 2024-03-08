@@ -16,6 +16,7 @@
             <th>Address</th>
             <th>phone no</th>
             <th>Action</th>
+            <th>Feedback</th>
         </tr>
         {% for i in view %}
         <tr>
@@ -31,14 +32,14 @@
             <a href="{% url 'webadmin:rejected' i.id %}">Rejected</a>
                 
                 {% elif i.view.service_status == 1 %}
-                <span style="color: green;">Accepted | <a href="">Completed</a></span>
+                <span style="color: green;">Accept | <a href="{% url 'webadmin:completed' i.id %}">Completed</a></span>
                 {% elif i.view.service_status == 3 %}
                 <span style="color: green;">Completed</span>
                 {% else %}
-                <span style="color: red;">Rejected</span>
+                <span style="color: red;">Reject</span>
                 {% endif %}
             </td>
-
+            <td>{{i.view.feedback_content}}</td>
         </tr>
         {% endfor %}
     </table>

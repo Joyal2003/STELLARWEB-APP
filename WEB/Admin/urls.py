@@ -27,12 +27,16 @@ urlpatterns = [
     path('servicebooking/',views.servicebooking,name="sercivebooking"),
     path('servicereplay/',views.servicereplay,name="servicereplay"),
 
+
+
           
-           path('complaintreplay/',views.complaintreplay,name="complaintreplay"),
+    path('complaintreplay/',views.complaintreplay,name="complaintreplay"),
             
 
     path('accepted/<str:id>',views.accepted,name="accepted"),
-    path('rejected<str:id>',views.rejected,name="rejected")
+    path('rejected/<str:id>',views.rejected,name="rejected"),
+    path('completed<str:id>',views.completed,name="completed")
+
 
      
 ]   

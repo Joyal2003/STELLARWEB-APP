@@ -27,7 +27,7 @@
                     {% elif i.view.service_status == 1 %}
                     <span style="color: green;">Accepted</span>
                     {% elif i.view.service_status == 3 %}
-                <span style="color: green;">Completed | <a href="">FeedBack</a></span>
+                <span style="color: green;">Completed | <a href="{% url 'webuser:feedback' i.id %}">FeedBack</a></span>
                     {% else %}
                     <span style="color: red;">Rejected</span>
                     {% endif %}
@@ -35,7 +35,6 @@
             </tr>
             {% endfor %}
         </table>
-        
     </form>
 </body>
 </html>

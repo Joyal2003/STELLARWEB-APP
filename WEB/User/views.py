@@ -92,7 +92,7 @@ def servicerequest(request):
         pdt_data.append({"pdt":d.to_dict(),"id":d.id})
   if request.method=="POST":
     datedata = date.today()
-    data={"service_content":request.POST.get("content"),"user_id":request.session["uid"],"producttype_id":request.POST.get("sel_producttype"),"type_id":request.POST.get("sel_type"),"service_status":0,"service_date":str(datedata)}
+    data={"service_content":request.POST.get("content"),"user_id":request.session["uid"],"producttype_id":request.POST.get("sel_producttype"),"type_id":request.POST.get("sel_type"),"service_status":0,"service_date":str(datedata),"feedback_content":""}
     db.collection("tbl_servicerequest").add(data)
     return redirect("webuser:servicerequest")
   else:
@@ -101,7 +101,11 @@ def servicerequest(request):
 def products(request):
     return render(request,"User/Products.html")
     
-def feedback(request):
+def feedback(request,id):
+  if request.method=="POST":
+    db.collection("tbl_servicerequest").document(id).update({"feedback_content":request.POST.get("content")})
+    return render(request,"User/Feedback.html")
+  else:
     return render(request,"User/Feedback.html")
 
 def myservice(request):
