@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-
+import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 
 class Userreg extends StatefulWidget {
   const Userreg({super.key});
@@ -15,7 +15,7 @@ class Userreg extends StatefulWidget {
 }
 
 class _UserregState extends State<Userreg> {
-    final _formSignupKey = GlobalKey<FormState>();
+  final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
   XFile? _selectedImage;
   String? _imageUrl;
@@ -25,32 +25,139 @@ class _UserregState extends State<Userreg> {
   final TextEditingController _addresscontroller = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
-   FirebaseFirestore db = FirebaseFirestore.instance;
+  List<Map<String, dynamic>> district = [];
+  List<Map<String, dynamic>> place = [];
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  late ProgressDialog _progressDialog;
 
-  void create() {
-    print(_namecontroller.text);
-    print(_phonenumbercontroller);
-    print(_addresscontroller);
-    print(_emailController.text);
-    print(_passwordcontroller.text);
+  String selectdistrict = "";
+  String selectplace = "";
+
+  Future<void> fetchDistrict() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await db.collection('tbl_district').get();
+
+      List<Map<String, dynamic>> dist = querySnapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                'district': doc['district_name'].toString(),
+              })
+          .toList();
+      setState(() {
+        district = dist;
+      });
+      print(district);
+    } catch (e) {
+      print('Error fetching department data: $e');
+    }
   }
 
-  List<Map<String, dynamic>> district = [
-    {'id': 'ernakulam', 'name': 'Ernakulam'},
-    {'id': 'idukki', 'name': 'Idukki'},
-    {'id': 'kottayam', 'name': 'Kottayam'},
-  ];
+  Future<void> fetchPlace(String id) async {
+    try {
+      selectplace = '';
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await db
+          .collection('tbl_place')
+          .where('district_id', isEqualTo: id)
+          .get();
+      List<Map<String, dynamic>> plc = querySnapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                'place': doc['place_name'].toString(),
+              })
+          .toList();
+      setState(() {
+        place = plc;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 
-  String? selectdistrict;
-  XFile? _selectedImage;
-  String? _imageUrl;
+  Future<void> _registerUser() async {
+    try {
+      _progressDialog.show();
 
-  List<Map<String, dynamic>> place = [
-    {'id': 'piravom', 'name': 'piravom'},
-    {'id': 'thodupuzha', 'name': 'thodupuzha'},
-    {'id': 'pala', 'name': 'pala'},
-  ];
-  String? selectplace;
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordcontroller.text,
+      );
+
+      if (userCredential != null) {
+        await _storeUserData(userCredential.user!.uid);
+        Fluttertoast.showToast(
+          msg: "Registration Successful",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+        _progressDialog.hide();
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      _progressDialog.hide();
+      Fluttertoast.showToast(
+        msg: "Registration Failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      print("Error registering user: $e");
+      // Handle error, show message, or take appropriate action
+    }
+  }
+
+  Future<void> _storeUserData(String userId) async {
+    try {
+      await db.collection('tbl_userreg').add({
+        'user_id': userId,
+        'user_name': _namecontroller.text,
+        'user_email': _emailController.text,
+        'user_contact': _phonenumbercontroller.text,
+        'user_address': _addresscontroller.text,
+        'place_id': selectplace,
+        // Add more fields as needed
+      });
+      await _uploadImage(userId);
+    } catch (e) {
+      print('Error adding data: $e');
+    }
+  }
+
+  Future<void> _uploadImage(String userId) async {
+    try {
+      if (_selectedImage != null) {
+        print(_selectedImage);
+        Reference ref =
+            FirebaseStorage.instance.ref().child('User/Photo/$userId.jpg');
+        UploadTask uploadTask = ref.putFile(File(_selectedImage!.path));
+        TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+
+        String imageUrl = await taskSnapshot.ref.getDownloadURL();
+        Map<String, dynamic> newData = {
+          'imageUrl': imageUrl,
+        };
+        await db
+            .collection('tbl_userreg')
+            .where('user_id', isEqualTo: userId) // Filtering by user_id
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            // For each document matching the query, update the data
+            doc.reference.update(newData);
+          });
+        }).catchError((error) {
+          print("Error updating user: $error");
+        });
+      }
+    } catch (e) {
+      print("Error uploading image: $e");
+      // Handle error, show message or take appropriate action
+    }
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -65,6 +172,13 @@ class _UserregState extends State<Userreg> {
     } catch (e) {
       print('Error picking image: $e');
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDistrict();
+    _progressDialog = ProgressDialog(context);
   }
 
   @override
@@ -175,7 +289,7 @@ class _UserregState extends State<Userreg> {
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
                             controller: _namecontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 hintText: "Name",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
@@ -188,7 +302,7 @@ class _UserregState extends State<Userreg> {
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
                             controller: _phonenumbercontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 hintText: "Phone number",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
@@ -200,14 +314,17 @@ class _UserregState extends State<Userreg> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: DropdownButtonFormField<String>(
-                            value: selectdistrict,
-                            decoration: InputDecoration(
+                            value: selectdistrict.isNotEmpty
+                                ? selectdistrict
+                                : null,
+                            decoration: const InputDecoration(
                                 hintText: "District",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                             onChanged: (String? newValue) {
                               setState(() {
-                                selectdistrict = newValue;
+                                selectdistrict = newValue!;
+                                fetchPlace(newValue);
                               });
                             },
                             isExpanded: true,
@@ -215,7 +332,7 @@ class _UserregState extends State<Userreg> {
                               (Map<String, dynamic> dist) {
                                 return DropdownMenuItem<String>(
                                   value: dist['id'],
-                                  child: Text(dist['name']),
+                                  child: Text(dist['district']),
                                 );
                               },
                             ).toList(),
@@ -227,22 +344,22 @@ class _UserregState extends State<Userreg> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: DropdownButtonFormField<String>(
-                            value: selectplace,
-                            decoration: InputDecoration(
+                            value: selectplace.isNotEmpty ? selectplace : null,
+                            decoration: const InputDecoration(
                                 hintText: "Place",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                             onChanged: (String? newValue) {
                               setState(() {
-                                selectplace = newValue;
+                                selectplace = newValue!;
                               });
                             },
                             isExpanded: true,
                             items: place.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> dist) {
+                              (Map<String, dynamic> plc) {
                                 return DropdownMenuItem<String>(
-                                  value: dist['id'],
-                                  child: Text(dist['name']),
+                                  value: plc['id'],
+                                  child: Text(plc['place']),
                                 );
                               },
                             ).toList(),
@@ -255,7 +372,7 @@ class _UserregState extends State<Userreg> {
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
                             controller: _addresscontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 hintText: "Address",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
@@ -268,7 +385,7 @@ class _UserregState extends State<Userreg> {
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
                             controller: _emailController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 hintText: "Email",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
@@ -281,7 +398,7 @@ class _UserregState extends State<Userreg> {
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
                             controller: _passwordcontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 hintText: "Password",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
@@ -292,10 +409,9 @@ class _UserregState extends State<Userreg> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            create();
+                            _registerUser();
                           },
                           style: const ButtonStyle(
-                            fixedSize: MaterialStatePropertyAll(Size(200, 50)),
                             backgroundColor: MaterialStatePropertyAll(
                                 Color.fromARGB(255, 234, 149, 45)),
                           ),

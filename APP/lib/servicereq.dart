@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
+import 'dart:core';
 
 class Servicereq extends StatefulWidget {
   const Servicereq({super.key});
@@ -8,54 +9,90 @@ class Servicereq extends StatefulWidget {
   @override
   State<Servicereq> createState() => _ServicereqState();
 }
- 
 
 class _ServicereqState extends State<Servicereq> {
-  
-   final TextEditingController _namecontroller = TextEditingController();
-  
-    void submit() {
-    print(_namecontroller.text);
-    }
-    
-    List<Map<String, dynamic>> type = [
-    {'id': 'ongrid', 'name': 'ON GRID'},
-    {'id': 'offgrid', 'name': 'OFF GRID'},
-    {'id': 'homeinverter', 'name': 'HOME INVERTER'},
-  ];
+  final TextEditingController _complaintcontroller = TextEditingController();
+  List<Map<String, dynamic>> producttype = [];
+  List<Map<String, dynamic>> type = [];
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  DateTime now = DateTime.now();
 
-  String? selecttype;
-  XFile? _selectedImage;
-  String? _imageUrl;
-
-  List<Map<String, dynamic>> kw = [
-    {'id': '1kw', 'name': '1 KW'},
-    {'id': '2kw', 'name': '2 KW'},
-    {'id': '3kw', 'name': '3 KW'},
-    {'id': '4kw', 'name': '4 KW'},
-    {'id': '5kw', 'name': '5 KW'},
-    {'id': '6kw', 'name': '6 KW'},
-  ];
-
-    String? selectkw;
-
- Future<void> _pickImage() async {
+  Future<void> fetchproducttype() async {
     try {
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await db.collection('tbl_producttype').get();
 
-      if (pickedFile != null) {
-        setState(() {
-          _selectedImage = XFile(pickedFile.path);
-        });
-      }
+      List<Map<String, dynamic>> pt = querySnapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                'producttype': doc['producttype_name'].toString(),
+              })
+          .toList();
+      setState(() {
+        producttype = pt;
+      });
+      print(producttype);
     } catch (e) {
-      print('Error picking image: $e');
+      print('Error fetching department data: $e');
     }
   }
+
+  Future<void> fetchtype() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await db.collection('tbl_type').get();
+      List<Map<String, dynamic>> tType = querySnapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                'type': doc['type_name'].toString(),
+              })
+          .toList();
+      setState(() {
+        type = tType;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+ Future<void> _storeUserData() async {
+    try {
+      String formattedDate = now.toString().substring(0, 10);
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid;
+      await db.collection('tbl_servicerequest').add({
+        'user_id': userId,
+        'service_content': _complaintcontroller.text,
+        'producttype_name': selectproducttype,
+        'type_name': selecttype,
+        'service_status':0,
+        'date':'d',
+        'feedback_content':'',
+        'service_date':formattedDate,
+        // Add more fields as needed
+      });
+      print('Inserted');
+    }catch(e){
+      print('error service request: $e');
+    }
+ }
+  void initState() {
+    super.initState();
+    fetchproducttype();
+    fetchtype();
+  }
+
+  void submit() {
+    print(_complaintcontroller.text);
+  }
+
+  String selectproducttype = '';
+  String selecttype = '';
+
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
         body: Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -101,44 +138,6 @@ class _ServicereqState extends State<Servicereq> {
                   const SizedBox(
                     height: 20,
                   ),
-                  //  GestureDetector(
-                  //   onTap: _pickImage,
-                  //   child: Stack(
-                  //     children: [
-                  //       CircleAvatar(
-                  //         radius: 50,
-                  //         backgroundColor: const Color(0xff4c505b),
-                  //         backgroundImage: _selectedImage != null
-                  //             ? FileImage(XFile(_selectedImage!.path))
-                  //             : _imageUrl != null
-                  //                 ? NetworkImage(_imageUrl!)
-                  //                 : const AssetImage('assets/logo.png')
-                  //                     as ImageProvider,
-                  //         child: _selectedImage == null && _imageUrl == null
-                  //             ? const Icon(
-                  //                 Icons.add,
-                  //                 size: 40,
-                  //                 color: Color.fromARGB(255, 41, 39, 39),
-                  //               )
-                  //             : null,
-                  //       ),
-                  //       if (_selectedImage != null || _imageUrl != null)
-                  //         const Positioned(
-                  //           bottom: 0,
-                  //           right: 0,
-                  //           child: CircleAvatar(
-                  //             backgroundColor: Colors.white,
-                  //             radius: 18,
-                  //             child: Icon(
-                  //               Icons.edit,
-                  //               size: 18,
-                  //               color: Colors.black,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //     ],
-                  //   ),
-                  // ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -161,7 +160,7 @@ class _ServicereqState extends State<Servicereq> {
                                   bottom: BorderSide(color: Colors.grey))),
                           child: TextFormField(
                             keyboardType: TextInputType.multiline,
-                            controller: _namecontroller,
+                            controller: _complaintcontroller,
                             decoration: InputDecoration(
                                 hintText: "Complaint",
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -174,22 +173,24 @@ class _ServicereqState extends State<Servicereq> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: DropdownButtonFormField<String>(
-                            value: selecttype,
+                            value: selectproducttype.isNotEmpty
+                                ? selectproducttype
+                                : null,
                             decoration: InputDecoration(
                                 hintText: "Type",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                             onChanged: (String? newValue) {
                               setState(() {
-                                selecttype = newValue;
+                                selectproducttype = newValue!;
                               });
                             },
                             isExpanded: true,
-                            items: type.map<DropdownMenuItem<String>>(
+                            items: producttype.map<DropdownMenuItem<String>>(
                               (Map<String, dynamic> dist) {
                                 return DropdownMenuItem<String>(
                                   value: dist['id'],
-                                  child: Text(dist['name']),
+                                  child: Text(dist['producttype']),
                                 );
                               },
                             ).toList(),
@@ -201,22 +202,22 @@ class _ServicereqState extends State<Servicereq> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: DropdownButtonFormField<String>(
-                            value: selectkw,
+                            value: selecttype.isNotEmpty ? selecttype : null,
                             decoration: InputDecoration(
                                 hintText: "kw",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none),
                             onChanged: (String? newValue) {
                               setState(() {
-                                selectkw = newValue;
+                                selecttype = newValue!;
                               });
                             },
                             isExpanded: true,
-                            items: kw.map<DropdownMenuItem<String>>(
+                            items: type.map<DropdownMenuItem<String>>(
                               (Map<String, dynamic> dist) {
                                 return DropdownMenuItem<String>(
                                   value: dist['id'],
-                                  child: Text(dist['name']),
+                                  child: Text(dist['type']),
                                 );
                               },
                             ).toList(),
@@ -227,7 +228,7 @@ class _ServicereqState extends State<Servicereq> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            submit();
+                            _storeUserData();
                           },
                           style: const ButtonStyle(
                             fixedSize: MaterialStatePropertyAll(Size(200, 50)),
