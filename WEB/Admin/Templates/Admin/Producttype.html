@@ -1,3 +1,5 @@
+{% extends 'Admin/header.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +13,7 @@
         <table width="347" height="101" border="1" align="center">
             <tr>
                 <td><label for="producttype_name">Product Type</label></td>
-                <td><input type="text" name="producttype_name" id="producttype_id" /></td>
+                <td><input type="text" name="producttype_name" id="producttype_id" value="{{pty_data.producttype_name}}"/></td>
             </tr>
             <tr>
                 <td colspan="2" align="center">
@@ -39,3 +41,4 @@
     </form>
 </body>
 </html>
+{% endblock content %}

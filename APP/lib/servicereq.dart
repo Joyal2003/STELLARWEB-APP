@@ -61,18 +61,20 @@ class _ServicereqState extends State<Servicereq> {
       String formattedDate = now.toString().substring(0, 10);
       final user = FirebaseAuth.instance.currentUser;
       final userId = user?.uid;
+      QuerySnapshot querySnapshot = await db.collection('tbl_userreg').where('user_id', isEqualTo: userId).get();
+      await db.collection('tbl_user').where('user_id', isEqualTo: userId).get();
       await db.collection('tbl_servicerequest').add({
-        'user_id': userId,
+        'user_id': querySnapshot.docs[0].id,
         'service_content': _complaintcontroller.text,
-        'producttype_name': selectproducttype,
-        'type_name': selecttype,
+        'producttype_id': selectproducttype,
+        'type_id': selecttype,
         'service_status':0,
         'date':'d',
         'feedback_content':'',
         'service_date':formattedDate,
         // Add more fields as needed
       });
-      print('Inserted');
+      print(querySnapshot.docs[0].id);
     }catch(e){
       print('error service request: $e');
     }

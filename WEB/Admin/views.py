@@ -106,7 +106,7 @@ def producttype(request):
 def editproducttype(request,id):
     pty=db.collection("tbl_producttype").document(id).get().to_dict()
     if request.method=="POST":
-       data={"producttype_name":request.POST.get("producttype")}
+       data={"producttype_name":request.POST.get("producttype_name")}
        db.collection("tbl_producttype").document(id).update(data)
        return redirect("webadmin:producttype")
     else:
@@ -130,6 +130,19 @@ def types(request):
         return redirect("webadmin:types")
     else:
         return render(request,"Admin/Type.html",{"type":pdt_data})
+
+def edittype(request,id):
+    pdt=db.collection("tbl_type").document(id).get().to_dict()
+    if request.method=="POST":
+       data={"type_name":request.POST.get("type_name")}
+       db.collection("tbl_type").document(id).update(data)
+       return redirect("webadmin:types")
+    else:
+       return render(request,"Admin/Type.html",{"pdt_data":pdt})
+        
+def deltype(request,id):
+    db.collection("tbl_type").document(id).delete()
+    return redirect("webadmin:types")
 
 
 
@@ -164,8 +177,9 @@ def accepted(request,id):
     if request.method=="POST":
         day = request.POST.get("date") 
         data={"date":request.POST.get("date"),"service_status":1}
-        db.collection("tbl_servicerequest").document(id).update(data)
-        user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+        service = db.collection("tbl_servicerequest").document(id).update(data)
+        service = db.collection("tbl_servicerequest").document(id).get().to_dict()
+        user = db.collection("tbl_userreg").document(service["user_id"]).get().to_dict()
         email = user["user_email"]
         send_mail(
         'Service Booking', 
@@ -181,7 +195,9 @@ def accepted(request,id):
 
 def rejected(request,id):
     req=db.collection("tbl_servicerequest").document(id).update({"service_status":2})
-    user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+    
+    service = db.collection("tbl_servicerequest").document(id).get().to_dict()
+    user = db.collection("tbl_userreg").document(service["user_id"]).get().to_dict()
     email = user["user_email"]
     send_mail(
     'Service Booking', 
@@ -193,7 +209,8 @@ def rejected(request,id):
 
 def completed(request,id):
     req=db.collection("tbl_servicerequest").document(id).update({"service_status":3})
-    user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
+    service = db.collection("tbl_servicerequest").document(id).get().to_dict()
+    user = db.collection("tbl_userreg").document(service["user_id"]).get().to_dict()
     email = user["user_email"]
     send_mail(
     'Service Booking', 

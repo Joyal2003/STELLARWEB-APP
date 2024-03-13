@@ -18,13 +18,15 @@ urlpatterns = [
     path('editproducttype/<str:id>',views.editproducttype,name="editproducttype"),
     
     path('type/',views.types,name="types"),
+    path('deltype/<str:id>',views.deltype,name="deltype"),
+    path('edittype/<str:id>',views.edittype,name="edittype"),
        
        
     path('admin/',views.admin,name="admin"),
     path('homepage/',views.homepage,name="homepage"),
     
       
-    path('servicebooking/',views.servicebooking,name="sercivebooking"),
+    path('servicebooking/',views.servicebooking,name="servicebooking"),
     path('servicereplay/',views.servicereplay,name="servicereplay"),
 
 

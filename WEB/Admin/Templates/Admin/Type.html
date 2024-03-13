@@ -1,3 +1,5 @@
+{% extends 'Admin/header.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +13,7 @@
         <table width="415" border="1">
             <tr>
                 <td>Name</td>
-                <td><input type="text" name="type_name" id="txt_type" /></td>
+                <td><input type="text" name="type_name" id="txt_type" value="{{pDt_data.type_name}}"/></td>
             </tr>
             <tr>
                 <td colspan="2" align="center">
@@ -20,5 +22,21 @@
             </tr>
         </table>
     </form>
+    <table width="200" border="1" align="center">
+        <tr>
+            <th>SI NO.</th>
+            <td>Types</td>
+            <td>Action</td>
+        </tr>
+        {% for i in type %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{i.pdt.type_name}}</td>
+        <td><a href="{% url 'webadmin:deltype' i.id %}">Delete</a></td>
+        <td><a href="{% url 'webadmin:edittype' i.id %}">Edit</a></td>
+    </tr>
+    {% endfor %}
+    </table>
 </body>
 </html>
+{% endblock content %}
