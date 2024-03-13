@@ -9,7 +9,9 @@ urlpatterns = [
   path('feedback/<str:id>',views.feedback,name="feedback"),
   path('changepassword/',views.changepassword,name="changepassword"),
   path('complaint/',views.complaint,name="complaint"),
-  path('myservice/',views.myservice,name="myservice")
+  path('myservice/',views.myservice,name="myservice"),
+  path('logout/',views.logout,name="logout")
+
 
 
 ]

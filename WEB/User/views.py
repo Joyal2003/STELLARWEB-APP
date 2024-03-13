@@ -116,3 +116,6 @@ def myservice(request):
     ser_data.append({"view":data,"id":i.id})
   return render(request,"User/MyService.html",{"view":ser_data})    
 
+def logout(request):
+    del request.session["uid"]
+    return redirect("webguest:index")
