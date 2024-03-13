@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stellarpowers/editprofile.dart';
 
@@ -9,6 +11,46 @@ class Myprofile extends StatefulWidget {
 }
 
 class _MyprofileState extends State<Myprofile> {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  List<Map<String, dynamic>> userProfile = [];
+  String name = 'Loading.....';
+  String phone_no = 'Loading.....';
+  String address = 'Loading.....';
+  String email = 'Loading.....';
+
+  Future<void> fetchProfile() async {
+    try {
+      List<Map<String, dynamic>> userList = [];
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid;
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('tbl_userreg')
+              .where('user_id', isEqualTo: userId)
+              .get();
+
+      querySnapshot.docs.forEach((doc) {
+        userList.add(doc.data());
+      });
+      print(userList[0]);
+      setState(() {
+        userProfile = userList;
+        name = userList[0]['user_name'];
+        phone_no = userList[0]['user_contact'];
+        address= userList[0]['user_address'];
+        email = userList[0]['user_email'];
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfile();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,110 +111,119 @@ class _MyprofileState extends State<Myprofile> {
                         ]),
                     child: Column(
                       children: <Widget>[
-                         const SizedBox(
+                        const SizedBox(
                           height: 75,
                         ),
                         Center(
                           child: Container(
-                            child: Image.asset('assets/logo.png',),
+                            child: Image.asset(
+                              'assets/logo.png',
+                            ),
                           ),
                         ),
                         const SizedBox(
                           height: 75,
                         ),
                         Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-
-                             ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 75, child: Text('Name:')),
-                              Text('Joyal',style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold)),
-                            ],
-                          )
-                        ),
-                       
+                            padding: const EdgeInsets.all(20),
+                            decoration: const BoxDecoration(),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 75, child: Text('Name:')),
+                                Text(name,
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            )),
                         Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-                              ),
-                          child:Row(
-                            children: [
-                              SizedBox(width: 75, child: Text('Phone No:')),
-                              Text('987654321',style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold)),
-                              ],)
-                        ),
-                         
+                            padding: const EdgeInsets.all(20),
+                            decoration: const BoxDecoration(),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 75, child: Text('Phone No:')),
+                                Text(phone_no,
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            )),
+                        // Container(
+                        //     padding: const EdgeInsets.all(20),
+                        //     decoration: const BoxDecoration(),
+                        //     child: Row(
+                        //       children: [
+                        //         SizedBox(width: 75, child: Text('District:')),
+                        //         Text('Ernakulam',
+                        //             style: TextStyle(
+                        //                 fontStyle: FontStyle.italic,
+                        //                 fontWeight: FontWeight.bold))
+                        //       ],
+                        //     )),
+                        // Container(
+                        //     padding: const EdgeInsets.all(20),
+                        //     decoration: const BoxDecoration(),
+                        //     child: Row(
+                        //       children: [
+                        //         SizedBox(width: 75, child: Text('Place:')),
+                        //         Text('Piravom',
+                        //             style: TextStyle(
+                        //                 fontStyle: FontStyle.italic,
+                        //                 fontWeight: FontWeight.bold))
+                        //       ],
+                        //     )),
                         Container(
-                         padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-                              ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 75, child: Text('District:')),
-                              Text('Ernakulam',style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold))
-                            ],
-                          ) 
-                        ),
-                         
+                            padding: const EdgeInsets.all(20),
+                            decoration: const BoxDecoration(),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 75, child: Text('Address:')),
+                                Text(address,
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold))
+                              ],
+                            )),
                         Container(
-                       padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-                             ),
-                          child:Row(
-                            children: [
-                              SizedBox(width: 75, child: Text('Place:')),
-                              Text('Piravom',style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold))
-                            ],
-                          )
-                        ),
-                        
-                        Container(
-                         padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-                              ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 75, child: Text('Address:')),
-                              Text('Poomkottukuzhiyil',style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold))
-                            ],
-                          )
-                        ),
-                        
-                        Container(
-                         padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-                             ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 75, child: Text('Email:')),
-                              Text('joyalthomas2727@gmail.com',style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold))
-                            ],
-                          )
-                        ),
-                       
+                            padding: const EdgeInsets.all(20),
+                            decoration: const BoxDecoration(),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 75, child: Text('Email:')),
+                                Flexible(
+                                  child: Text(email,
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.bold)),
+                                )
+                              ],
+                            )),
                         const SizedBox(
                           height: 40,
                         ),
-                       GestureDetector(
-                      onTap: () {
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Editprofile(),
-                          ));
-                      },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 250, 173, 39),
-                        borderRadius: BorderRadius.circular(20)
-                    ),
-                      height: 50,
-                      width : 200,
-                      child :Center(child: Text('Edit Profile',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                    ),
-                    ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Editprofile(),
+                                ));
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 250, 173, 39),
+                                  borderRadius: BorderRadius.circular(20)),
+                              height: 50,
+                              width: 200,
+                              child: Center(
+                                  child: Text(
+                                'Edit Profile',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ))),
+                        ),
                         const SizedBox(
                           height: 40,
                         ),
