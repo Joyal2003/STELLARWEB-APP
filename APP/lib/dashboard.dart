@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:stellarpowers/myservice.dart';
 import 'package:stellarpowers/servicereq.dart';
 import 'package:stellarpowers/myprofile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -10,7 +12,42 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
+
+
 class _DashboardState extends State<Dashboard> {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+List<Map<String, dynamic>> userProfile = [];
+String name = '';
+
+@override
+void initState() {
+  super.initState();
+  fetchProfile();
+}
+
+Future<void> fetchProfile() async {
+  try {
+    List<Map<String, dynamic>> userList = [];
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
+        .instance
+        .collection('tbl_userreg')
+        .where('user_id', isEqualTo: userId)
+        .get();
+
+    querySnapshot.docs.forEach((doc) {
+      userList.add(doc.data());
+    });
+    print(userList[0]);
+    setState(() {
+      userProfile = userList;
+      name = userList[0]['user_name'];
+    });
+  } catch (e) {
+    print(e);
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,22 +65,27 @@ class _DashboardState extends State<Dashboard> {
           const SizedBox(
             height: 5,
           ),
-          const Padding(
-            padding: EdgeInsets.all(20),
+          Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
+                const Text(
                   'DASHBOARD',
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 1,
                 ),
-                Text(
-                  'Welcom to stellar',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                const Text(
+                  'welcome  ',
+                  style: TextStyle(color: Colors.white),
                 ),
+                Text(name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -64,71 +106,83 @@ class _DashboardState extends State<Dashboard> {
                   const SizedBox(
                     height: 60,
                   ),
-                Column(
-                  children :[
+                  Column(children: [
                     GestureDetector(
                       onTap: () {
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Servicereq(),
-                          ));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Servicereq(),
+                            ));
                       },
                       child: Container(
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 250, 173, 39),
-                          borderRadius: BorderRadius.circular(20)
-                      ),
-                        height: 150,
-                        width : 250,
-                        
-                        child :Center(child: Text('Service Request',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                      ),
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 250, 173, 39),
+                              borderRadius: BorderRadius.circular(20)),
+                          height: 150,
+                          width: 250,
+                          child: const Center(
+                              child: Text(
+                            'Service Request',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ))),
                     ),
                     const SizedBox(
-                    height: 60,
-                  ),
+                      height: 60,
+                    ),
                     GestureDetector(
                       onTap: () {
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Myservice(),
-                          ));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Myservice(),
+                            ));
                       },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 250, 173, 39),
-                        borderRadius: BorderRadius.circular(20)
-                    ),
-                      height: 150,
-                      width : 250,
-                      child :Center(child: Text('My service',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                    ),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 250, 173, 39),
+                              borderRadius: BorderRadius.circular(20)),
+                          height: 150,
+                          width: 250,
+                          child: const Center(
+                              child: Text(
+                            'My service',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ))),
                     ),
                     const SizedBox(
-                    height: 60,
-                  ),
+                      height: 60,
+                    ),
                     GestureDetector(
                       onTap: () {
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Myprofile(),
-                          ));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Myprofile(),
+                            ));
                       },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 250, 173, 39),
-                        borderRadius: BorderRadius.circular(20)
-                    ),
-                      height: 150,
-                      width : 250,
-                      child :Center(child: Text('My Profile',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),))
-                    ),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 250, 173, 39),
+                              borderRadius: BorderRadius.circular(20)),
+                          height: 150,
+                          width: 250,
+                          child: const Center(
+                              child: Text(
+                            'My Profile',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ))),
                     )
-                  ]
-                ),
+                  ]),
                 ],
               ),
             ),

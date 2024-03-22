@@ -6,6 +6,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #3498db;
+            color: #fff;
+            text-align: left;
+        }
+        td {
+            background-color: #fff;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .accepted {
+            color: green;
+        }
+        .rejected {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <table>
@@ -22,23 +62,23 @@
         </tr>
         {% for i in view %}
         <tr>
-           <td>{{forloop.counter}}</td>
-           <td>{{i.user.user_name}}</td>
-           <td>{{i.view.service_content}}</td>
-           <td>{{i.producttype.producttype_name}}</td>
-           <td>{{i.types.type_name}}</td>
-           <td>{{i.user.user_address}}</td>
-           <td>{{i.user.user_contact}}</td>
-           <td>{% if i.view.service_status == 0 %}
-            <a href="{% url 'webadmin:accepted' i.id %}">Accepted</a>
-            <a href="{% url 'webadmin:rejected' i.id %}">Rejected</a>
-                
+            <td>{{forloop.counter}}</td>
+            <td>{{i.user.user_name}}</td>
+            <td>{{i.view.service_content}}</td>
+            <td>{{i.producttype.producttype_name}}</td>
+            <td>{{i.types.type_name}}</td>
+            <td>{{i.user.user_address}}</td>
+            <td>{{i.user.user_contact}}</td>
+            <td>
+                {% if i.view.service_status == 0 %}
+                <a href="{% url 'webadmin:accepted' i.id %}">Accepted</a>
+                <a href="{% url 'webadmin:rejected' i.id %}">Rejected</a>
                 {% elif i.view.service_status == 1 %}
-                <span style="color: green;">Accept | <a href="{% url 'webadmin:completed' i.id %}">Completed</a></span>
+                <span class="accepted">Accept | <a href="{% url 'webadmin:completed' i.id %}">Completed</a></span>
                 {% elif i.view.service_status == 3 %}
-                <span style="color: green;">Completed</span>
+                <span class="accepted">Completed</span>
                 {% else %}
-                <span style="color: red;">Reject</span>
+                <span class="rejected">Reject</span>
                 {% endif %}
             </td>
             <td>{{i.view.feedback_content}}</td>
@@ -53,4 +93,5 @@
     {% endif %}
 </body>
 </html>
+
 {% endblock content %}

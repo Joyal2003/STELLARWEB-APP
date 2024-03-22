@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
     <form id="form1" name="form1" method="post" action="">
@@ -13,7 +14,7 @@
         <table width="347" height="101" border="1" align="center">
             <tr>
                 <td>Date</td>
-                <td><input type="date" name="date" id=""></td>
+                <td><input type="date" name="date" id="inputdate"></td>
             </tr>
             <tr>
                 <td align="center"><input type="submit" value="Submit"></td>
@@ -22,4 +23,19 @@
     </form>
 </body>
 </html>
+<script type="text/javascript">
+    $(function(){
+        var dtToday = new Date();
+     
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if(month < 10)
+            month = '0' + month.toString();
+        if(day < 10)
+         day = '0' + day.toString();
+        var maxDate = year + '-' + month + '-' + day;
+        $('#inputdate').attr('min', maxDate);
+    });
+    </script>
 {% endblock content %}

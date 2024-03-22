@@ -6,11 +6,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        form {
+            margin: 50px auto;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #3498db;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        td {
+            padding: 10px;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+        table.list {
+            margin-top: 30px;
+            border: 1px solid #ccc;
+        }
+        table.list th {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            text-align: left;
+        }
+        table.list td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        table.list td a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        table.list td a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <form id="form2" name="form2" method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
-        <table width="415" border="1">
+        <table width="415" border="0">
             <tr>
                 <td>Name</td>
                 <td><input type="text" name="type_name" id="txt_type" value="{{pDt_data.type_name}}"/></td>
@@ -22,21 +92,24 @@
             </tr>
         </table>
     </form>
-    <table width="200" border="1" align="center">
+    <table class="list">
         <tr>
             <th>SI NO.</th>
-            <td>Types</td>
-            <td>Action</td>
+            <th>Types</th>
+            <th>Action</th>
         </tr>
         {% for i in type %}
-    <tr>
-        <td>{{forloop.counter}}</td>
-        <td>{{i.pdt.type_name}}</td>
-        <td><a href="{% url 'webadmin:deltype' i.id %}">Delete</a></td>
-        <td><a href="{% url 'webadmin:edittype' i.id %}">Edit</a></td>
-    </tr>
-    {% endfor %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.pdt.type_name}}</td>
+            <td>
+                <a href="{% url 'webadmin:deltype' i.id %}">Delete</a>
+                <a href="{% url 'webadmin:edittype' i.id %}">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
     </table>
 </body>
 </html>
+
 {% endblock content %}

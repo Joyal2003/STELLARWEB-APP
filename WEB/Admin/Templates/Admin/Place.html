@@ -5,24 +5,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        form {
+            margin: 50px auto;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #3498db;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        td {
+            padding: 10px;
+        }
+        input[type="text"],
+        select {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+        table.list {
+            margin-top: 30px;
+            border: 1px solid #ccc;
+        }
+        table.list th {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            text-align: left;
+        }
+        table.list td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        table.list td a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        table.list td a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <form id="form1" name="form1" method="post" action="">
+   <form id="form1" name="form1" method="post" action="">
         {% csrf_token %}
-        <table width="347" height="101" border="1" align="center">
+        <table width="347" height="101" border="0" align="center">
             <tr>
                 <td>District</td>
-                <td><select name="district" id="">
-                    <option value="">...Select...</option>
-                    {% for i in district %}
-                    <option
-                    {% if i.id == place_data.district_id %}
-                    selected
-                    {% endif %}
-                    value="{{i.id}}">{{i.dis.district_name}}</option>
-                {% endfor %}
-            </select></td>
+                <td>
+                    <select name="district" id="">
+                        <option value="">...Select...</option>
+                        {% for i in district %}
+                        <option {% if i.id == place_data.district_id %} selected {% endif %} value="{{i.id}}">{{i.dis.district_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
             </tr>
             <tr>
                 <td>Place</td>
@@ -30,31 +99,29 @@
             </tr>
             <tr>
                 <td colspan="2" align="center"><input type="submit" value="Submit"></td>
-                <td></td>
             </tr>
         </table>
-    </form> 
-        <table>
-            <tr>
-                <td>#</td>
-                <td>District</td>
-                <td>Place</td>
-                <td>Action</td>
-            </tr>
-            {% for i in place %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>{{i.districtdata.district_name}}</td>
-                <td>{{i.place_data.place_name}}</td>
-                <td><a href="{% url 'webadmin:delplace' i.placeid %}">Delete</a></td>
-                <td><a href="{% url 'webadmin:editplace' i.placeid %}">Edit</a></td>
-
-                
-                
-            </tr>
-            {% endfor %}
-        </table>
-  
+    </form>
+    <table class="list">
+        <tr>
+            <th>#</th>
+            <th>District</th>
+            <th>Place</th>
+            <th>Action</th>
+        </tr>
+        {% for i in place %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.districtdata.district_name}}</td>
+            <td>{{i.place_data.place_name}}</td>
+            <td>
+                <a href="{% url 'webadmin:delplace' i.placeid %}">Delete</a>
+                <a href="{% url 'webadmin:editplace' i.placeid %}">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>  
 </body>
 </html>
+
 {% endblock content %}

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
+import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Servicereq extends StatefulWidget {
   const Servicereq({super.key});
@@ -16,6 +18,9 @@ class _ServicereqState extends State<Servicereq> {
   List<Map<String, dynamic>> type = [];
   FirebaseFirestore db = FirebaseFirestore.instance;
   DateTime now = DateTime.now();
+  late ProgressDialog _progressDialog;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 
   Future<void> fetchproducttype() async {
     try {
@@ -55,34 +60,60 @@ class _ServicereqState extends State<Servicereq> {
     }
   }
 
+  Future<void> _storeUserData() async {
+          _progressDialog.show();
 
- Future<void> _storeUserData() async {
     try {
       String formattedDate = now.toString().substring(0, 10);
       final user = FirebaseAuth.instance.currentUser;
       final userId = user?.uid;
-      QuerySnapshot querySnapshot = await db.collection('tbl_userreg').where('user_id', isEqualTo: userId).get();
+      QuerySnapshot querySnapshot = await db
+          .collection('tbl_userreg')
+          .where('user_id', isEqualTo: userId)
+          .get();
       await db.collection('tbl_user').where('user_id', isEqualTo: userId).get();
       await db.collection('tbl_servicerequest').add({
         'user_id': querySnapshot.docs[0].id,
         'service_content': _complaintcontroller.text,
         'producttype_id': selectproducttype,
         'type_id': selecttype,
-        'service_status':0,
-        'date':'d',
-        'feedback_content':'',
-        'service_date':formattedDate,
+        'service_status': 0,
+        'date': 'd',
+        'feedback_content': '',
+        'service_date': formattedDate,
         // Add more fields as needed
       });
+              _progressDialog.hide();
+
+       Fluttertoast.showToast(
+          msg: "Complaint Registered",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
       print(querySnapshot.docs[0].id);
-    }catch(e){
+      Navigator.pop(context);
+    } catch (e) {
+              _progressDialog.hide();
+
+      Fluttertoast.showToast(
+          msg: "Something went wrong!. Please try again.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
       print('error service request: $e');
     }
- }
+  }
+
+  @override
   void initState() {
     super.initState();
     fetchproducttype();
     fetchtype();
+    _progressDialog = ProgressDialog(context);
   }
 
   void submit() {
@@ -95,165 +126,188 @@ class _ServicereqState extends State<Servicereq> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-        Color.fromARGB(255, 247, 139, 37),
-        Color.fromARGB(255, 244, 203, 56),
-        Color.fromARGB(255, 255, 107, 38),
-      ])),
-      child: ListView(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(
-            height: 80,
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [
+              Color.fromARGB(255, 247, 139, 37),
+              Color.fromARGB(255, 244, 203, 56),
+              Color.fromARGB(255, 255, 107, 38),
+            ],
           ),
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Service Request',
-                  style: TextStyle(color: Colors.white, fontSize: 40),
+        ),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              SizedBox(height: 80),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Service Request',
+                      style: TextStyle(color: Colors.white, fontSize: 40),
+                    ),
+                    SizedBox(height: 5),
+                  ],
                 ),
-                SizedBox(
-                  height: 5,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              ),
+              SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(60),
-                    topRight: Radius.circular(60))),
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Column(
-                children: <Widget>[
-                  const SizedBox(
-                    height: 20,
+                    topRight: Radius.circular(60),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 20),
+                      SizedBox(height: 20),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
                               color: Color.fromRGBO(225, 95, 27, .3),
                               blurRadius: 20,
-                              offset: Offset(0, 10))
-                        ]),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: TextFormField(
-                            keyboardType: TextInputType.multiline,
-                            controller: _complaintcontroller,
-                            decoration: InputDecoration(
-                                hintText: "Complaint",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
+                              offset: Offset(0, 10),
+                            ),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: DropdownButtonFormField<String>(
-                            value: selectproducttype.isNotEmpty
-                                ? selectproducttype
-                                : null,
-                            decoration: InputDecoration(
-                                hintText: "Type",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectproducttype = newValue!;
-                              });
-                            },
-                            isExpanded: true,
-                            items: producttype.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> dist) {
-                                return DropdownMenuItem<String>(
-                                  value: dist['id'],
-                                  child: Text(dist['producttype']),
-                                );
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                              child: TextFormField(
+                                keyboardType: TextInputType.multiline,
+                                controller: _complaintcontroller,
+                                decoration: InputDecoration(
+                                  hintText: "Complaint",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none,
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a complaint';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: selectproducttype.isNotEmpty
+                                    ? selectproducttype
+                                    : null,
+                                decoration: InputDecoration(
+                                  hintText: "Type",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selectproducttype = newValue!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select a product type';
+                                  }
+                                  return null;
+                                },
+                                items: producttype
+                                    .map<DropdownMenuItem<String>>(
+                                      (Map<String, dynamic> dist) {
+                                    return DropdownMenuItem<String>(
+                                      value: dist['id'],
+                                      child: Text(dist['producttype']),
+                                    );
+                                  }).toList(),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: selecttype.isNotEmpty ? selecttype : null,
+                                decoration: InputDecoration(
+                                  hintText: "kw",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selecttype = newValue!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select a type';
+                                  }
+                                  return null;
+                                },
+                                items: type
+                                    .map<DropdownMenuItem<String>>(
+                                      (Map<String, dynamic> dist) {
+                                    return DropdownMenuItem<String>(
+                                      value: dist['id'],
+                                      child: Text(dist['type']),
+                                    );
+                                  }).toList(),
+                              ),
+                            ),
+                            SizedBox(height: 40),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _storeUserData();
+                                }
                               },
-                            ).toList(),
-                          ),
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: Size(200, 50),
+                                primary: Color.fromARGB(255, 234, 149, 45),
+                              ),
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            SizedBox(height: 40),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: DropdownButtonFormField<String>(
-                            value: selecttype.isNotEmpty ? selecttype : null,
-                            decoration: InputDecoration(
-                                hintText: "kw",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selecttype = newValue!;
-                              });
-                            },
-                            isExpanded: true,
-                            items: type.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> dist) {
-                                return DropdownMenuItem<String>(
-                                  value: dist['id'],
-                                  child: Text(dist['type']),
-                                );
-                              },
-                            ).toList(),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _storeUserData();
-                          },
-                          style: const ButtonStyle(
-                            fixedSize: MaterialStatePropertyAll(Size(200, 50)),
-                            backgroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 234, 149, 45)),
-                          ),
-                          child: const Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          )
-        ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

@@ -29,6 +29,7 @@ class _UserregState extends State<Userreg> {
   List<Map<String, dynamic>> place = [];
   FirebaseFirestore db = FirebaseFirestore.instance;
   late ProgressDialog _progressDialog;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String selectdistrict = "";
   String selectplace = "";
@@ -138,7 +139,7 @@ class _UserregState extends State<Userreg> {
 
         String imageUrl = await taskSnapshot.ref.getDownloadURL();
         Map<String, dynamic> newData = {
-          'imageUrl': imageUrl,
+          'user_photo': imageUrl,
         };
         await db
             .collection('tbl_userreg')
@@ -192,245 +193,299 @@ class _UserregState extends State<Userreg> {
         Color.fromARGB(255, 244, 203, 56),
         Color.fromARGB(255, 255, 107, 38),
       ])),
-      child: ListView(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(
-            height: 80,
-          ),
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Create Account',
-                  style: TextStyle(color: Colors.white, fontSize: 40),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-              ],
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const SizedBox(
+              height: 80,
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(60),
-                    topRight: Radius.circular(60))),
-            child: Padding(
-              padding: const EdgeInsets.all(30),
+            const Padding(
+              padding: EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const SizedBox(
-                    height: 20,
+                  Text(
+                    'Create Account',
+                    style: TextStyle(color: Colors.white, fontSize: 40),
                   ),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: const Color(0xff4c505b),
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(File(_selectedImage!.path))
-                              : _imageUrl != null
-                                  ? NetworkImage(_imageUrl!)
-                                  : const AssetImage('assets/logo.png')
-                                      as ImageProvider,
-                          child: _selectedImage == null && _imageUrl == null
-                              ? const Icon(
-                                  Icons.add,
-                                  size: 40,
-                                  color: Color.fromARGB(255, 41, 39, 39),
-                                )
-                              : null,
-                        ),
-                        if (_selectedImage != null || _imageUrl != null)
-                          const Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 18,
-                              child: Icon(
-                                Icons.edit,
-                                size: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Color.fromRGBO(225, 95, 27, .3),
-                              blurRadius: 20,
-                              offset: Offset(0, 10))
-                        ]),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: TextFormField(
-                            controller: _namecontroller,
-                            decoration: const InputDecoration(
-                                hintText: "Name",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: TextFormField(
-                            controller: _phonenumbercontroller,
-                            decoration: const InputDecoration(
-                                hintText: "Phone number",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: DropdownButtonFormField<String>(
-                            value: selectdistrict.isNotEmpty
-                                ? selectdistrict
-                                : null,
-                            decoration: const InputDecoration(
-                                hintText: "District",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectdistrict = newValue!;
-                                fetchPlace(newValue);
-                              });
-                            },
-                            isExpanded: true,
-                            items: district.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> dist) {
-                                return DropdownMenuItem<String>(
-                                  value: dist['id'],
-                                  child: Text(dist['district']),
-                                );
-                              },
-                            ).toList(),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: DropdownButtonFormField<String>(
-                            value: selectplace.isNotEmpty ? selectplace : null,
-                            decoration: const InputDecoration(
-                                hintText: "Place",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectplace = newValue!;
-                              });
-                            },
-                            isExpanded: true,
-                            items: place.map<DropdownMenuItem<String>>(
-                              (Map<String, dynamic> plc) {
-                                return DropdownMenuItem<String>(
-                                  value: plc['id'],
-                                  child: Text(plc['place']),
-                                );
-                              },
-                            ).toList(),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: TextFormField(
-                            controller: _addresscontroller,
-                            decoration: const InputDecoration(
-                                hintText: "Address",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: TextFormField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                                hintText: "Email",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey))),
-                          child: TextFormField(
-                            controller: _passwordcontroller,
-                            decoration: const InputDecoration(
-                                hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _registerUser();
-                          },
-                          style: const ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(
-                                Color.fromARGB(255, 234, 149, 45)),
-                          ),
-                          child: const Text(
-                            "Create",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                      ],
-                    ),
+                  SizedBox(
+                    height: 5,
                   ),
                 ],
               ),
             ),
-          )
-        ],
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(60),
+                      topRight: Radius.circular(60))),
+              child: Padding(
+                padding: const EdgeInsets.all(30),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: const Color(0xff4c505b),
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(File(_selectedImage!.path))
+                                : _imageUrl != null
+                                    ? NetworkImage(_imageUrl!)
+                                    : const AssetImage('assets/logo.png')
+                                        as ImageProvider,
+                            child: _selectedImage == null && _imageUrl == null
+                                ? const Icon(
+                                    Icons.add,
+                                    size: 40,
+                                    color: Color.fromARGB(255, 41, 39, 39),
+                                  )
+                                : null,
+                          ),
+                          if (_selectedImage != null || _imageUrl != null)
+                            const Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 18,
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Color.fromRGBO(225, 95, 27, .3),
+                                blurRadius: 20,
+                                offset: Offset(0, 10))
+                          ]),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: TextFormField(
+                              controller: _namecontroller,
+                              decoration: const InputDecoration(
+                                  hintText: "Name",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a name';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: TextFormField(
+                              controller: _phonenumbercontroller,
+                              decoration: const InputDecoration(
+                                  hintText: "Phone number",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a phone no';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: DropdownButtonFormField<String>(
+                              value: selectdistrict.isNotEmpty
+                                  ? selectdistrict
+                                  : null,
+                              decoration: const InputDecoration(
+                                  hintText: "District",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectdistrict = newValue!;
+                                  fetchPlace(newValue);
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a district';
+                                }
+                                return null;
+                              },
+                              isExpanded: true,
+                              items: district.map<DropdownMenuItem<String>>(
+                                (Map<String, dynamic> dist) {
+                                  return DropdownMenuItem<String>(
+                                    value: dist['id'],
+                                    child: Text(dist['district']),
+                                  );
+                                },
+                              ).toList(),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: DropdownButtonFormField<String>(
+                              value:
+                                  selectplace.isNotEmpty ? selectplace : null,
+                              decoration: const InputDecoration(
+                                  hintText: "Place",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectplace = newValue!;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a place';
+                                }
+                                return null;
+                              },
+                              isExpanded: true,
+                              items: place.map<DropdownMenuItem<String>>(
+                                (Map<String, dynamic> plc) {
+                                  return DropdownMenuItem<String>(
+                                    value: plc['id'],
+                                    child: Text(plc['place']),
+                                  );
+                                },
+                              ).toList(),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: TextFormField(
+                              minLines: 4,
+                              maxLines: null,
+                              controller: _addresscontroller,
+                              decoration: const InputDecoration(
+                                  hintText: "Address",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a address';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: TextFormField(
+                              controller: _emailController,
+                              decoration: const InputDecoration(
+                                  hintText: "Email",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a email';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.grey))),
+                            child: TextFormField(
+                              controller: _passwordcontroller,
+                              decoration: const InputDecoration(
+                                  hintText: "Password",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a password';
+                                } else if (!RegExp(
+                                        r'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}')
+                                    .hasMatch(value)) {
+                                  return 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _registerUser();
+                              }
+                            },
+                            style: const ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Color.fromARGB(255, 234, 149, 45)),
+                            ),
+                            child: const Text(
+                              "Create",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     ));
   }
