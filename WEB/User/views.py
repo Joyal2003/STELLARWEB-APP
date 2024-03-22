@@ -31,8 +31,11 @@ def homepage(request):
 
 
 def Myprofile (request):
+  if "uid" in request.session:
     user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()
     return render(request,"User/Myprofile.html",{"user":user})
+  else:
+    return render(request,"Guest/Login.html")  
 
 def Editprofile(request):
   user = db.collection("tbl_userreg").document(request.session["uid"]).get().to_dict()

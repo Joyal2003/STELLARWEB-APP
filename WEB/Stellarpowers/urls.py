@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('wadmin/',include('Admin.urls')),
     path('User/',include('User.urls')),
-    path('Guest/',include('Guest.urls')),
+    path('',include('Guest.urls')),
 ]

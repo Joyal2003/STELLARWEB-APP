@@ -27,17 +27,20 @@ st = firebase.storage()
 # Create your views here.
 
 def district(request):
-    dis=db.collection("tbl_district").stream()
-    dis_data=[]
-    for i in dis:
-        data=i.to_dict()
-        dis_data.append({"dis":data,"id":i.id})
-    if request.method=="POST":
-        data={"district_name":request.POST.get("district")}
-        db.collection("tbl_district").add(data)
-        return redirect("webadmin:district")
+    if "aid" in request.session:
+        dis=db.collection("tbl_district").stream()
+        dis_data=[]
+        for i in dis:
+            data=i.to_dict()
+            dis_data.append({"dis":data,"id":i.id})
+        if request.method=="POST":
+            data={"district_name":request.POST.get("district")}
+            db.collection("tbl_district").add(data)
+            return redirect("webadmin:district")
+        else:
+            return render(request,"Admin/District.html",{"district":dis_data})
     else:
-        return render(request,"Admin/District.html",{"district":dis_data})
+        return render(request,"Guest/Login.html")
 
 def editdistrict(request,id):
     dis=db.collection("tbl_district").document(id).get().to_dict()
@@ -53,25 +56,27 @@ def deldistrict(request,id):
     return redirect("webadmin:district")
 
 def Place(request):
-    dis=db.collection("tbl_district").stream()
-    dis_data=[]
-    for i in dis:
-        data=i.to_dict()
-        dis_data.append({"dis":data,"id":i.id})
-    result=[]
-    place_data=db.collection("tbl_place").stream()
-    for place in place_data:
-        place_dict=place.to_dict()
-        district=db.collection("tbl_district").document(place_dict["district_id"]).get()
-        district_dict=district.to_dict()
-        result.append({'districtdata':district_dict,'place_data':place_dict,'placeid':place.id})
-    if request.method=="POST":
-        data={"place_name":request.POST.get("place"),"district_id":request.POST.get("district")}
-        db.collection("tbl_place").add(data)
-        return redirect("webadmin:Place")
+    if "aid" in request.session:
+        dis=db.collection("tbl_district").stream()
+        dis_data=[]
+        for i in dis:
+            data=i.to_dict()
+            dis_data.append({"dis":data,"id":i.id})
+        result=[]
+        place_data=db.collection("tbl_place").stream()
+        for place in place_data:
+            place_dict=place.to_dict()
+            district=db.collection("tbl_district").document(place_dict["district_id"]).get()
+            district_dict=district.to_dict()
+            result.append({'districtdata':district_dict,'place_data':place_dict,'placeid':place.id})
+        if request.method=="POST":
+            data={"place_name":request.POST.get("place"),"district_id":request.POST.get("district")}
+            db.collection("tbl_place").add(data)
+            return redirect("webadmin:Place")
+        else:
+            return render(request,"Admin/Place.html",{"district":dis_data,"place":result})
     else:
-        return render(request,"Admin/Place.html",{"district":dis_data,"place":result})
-
+        return render(request,"Guest/Login.html")
 
 def delplace(request,id):
     db.collection("tbl_place").document(id).delete()

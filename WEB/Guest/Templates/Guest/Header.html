@@ -26,9 +26,9 @@
       <!-- Tweaks for older IEs-->
       <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-      <!-- [if lt IE 9]>
+      
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif] -->
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
    </head>
    <!-- body -->
    <body class="main-layout">
@@ -42,7 +42,36 @@
          <!-- header inner -->
          <div class="header">
             <div class="head_top">
-               <div class="container">
+                <div class="container">
+                    <div class="row">
+                       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                          <div class="full">
+                             <div class="center-desk">
+                                <div class="logo"> <a href="index.html"><img src="{% static 'Main/images/logo.png' %}" alt="logo"/></a> </div>
+                             </div>
+                          </div>
+                       </div>
+                       <div class="col-xl-7 col-lg-7 col-md-9 col-sm-9">
+                          <div class="menu-area">
+                             <div class="limit-box">
+                                <nav class="main-menu">
+                                   <ul class="menu-area-main">
+                                      <!-- <li><a href="{% url 'webuser:myservice' %}">myservice</a></li>
+                                      <li> <a href="{% url 'webuser:Myprofile' %}">Myprofile</a></li>
+                                      <li>  <a href="{% url 'webuser:servicerequest' %}">Service Request</a> </li> -->
+                                    
+                                       
+                                   </ul>
+                                </nav>
+                             </div>
+                          </div>
+                       </div>
+                       <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                          <li><a class="buy" href="#">Back</a></li>
+                       </div>
+                    </div>
+                </div>
+               <!-- <div class="container">
                   <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                        <div class="top-box">
@@ -59,36 +88,7 @@
                         <p>long established fact that a reader will be </p>
                     </div>
                   </div>
-               </div>
-            </div>
-         </div>
-         <div class="container">
-            <div class="row">
-               <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
-                  <div class="full">
-                     <div class="center-desk">
-                        <div class="logo"> <a href="index.html"><img src="{% static 'Main/images/logo.png' %}" alt="logo"/></a> </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-xl-7 col-lg-7 col-md-9 col-sm-9">
-                  <div class="menu-area">
-                     <div class="limit-box">
-                        <nav class="main-menu">
-                           <ul class="menu-area-main">
-                              <li><a href="{% url 'webuser:myservice' %}">myservice</a></li>
-                              <li> <a href="{% url 'webuser:Myprofile' %}">Myprofile</a></li>
-                              <li>  <a href="{% url 'webuser:servicerequest' %}">Service Request</a> </li>
-                            
-                               
-                           </ul>
-                        </nav>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-                  <li><a class="buy" href="#">Back</a></li>
-               </div>
+               </div> -->
             </div>
          </div>
          <!-- end header inner --> 
